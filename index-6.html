@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Agenda Personal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0e11;--surface:#181720;--surface2:#201f2a;--border:#2e2c3a;
+  --aw:#6c8fff;--af:#4ecb71;--ah:#f4a553;--ag:#e05a7a;--ao:#b47cf7;--ac:#38c9c9;
+  --text:#e8e5f0;--muted:#7b788e;--soft:#a09db8;--r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── HEADER ── */
+header{padding:22px 32px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.logo{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;}
+.logo span{font-style:italic;color:var(--aw);}
+.header-right{display:flex;align-items:center;gap:10px;}
+.date-badge{background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:7px 16px;font-size:0.8rem;color:var(--soft);}
+#notif-btn{background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:7px 14px;font-size:0.8rem;color:var(--muted);cursor:pointer;transition:all .2s;}
+#notif-btn.enabled{color:#4ecb71;border-color:#4ecb7144;}
+#notif-btn:hover{color:var(--text);}
+
+/* ── MAIN TABS ── */
+.tabs-bar{display:flex;gap:3px;padding:18px 32px 0;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.tab-btn{display:flex;align-items:center;gap:7px;padding:11px 18px;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;border-radius:8px 8px 0 0;}
+.tab-btn:hover{color:var(--text);background:var(--surface2);}
+.tab-btn.active{border-bottom-color:var(--tc,var(--aw));color:var(--tc,var(--aw));background:var(--surface2);}
+[data-tab="calendario"]{--tc:#38c9c9;}
+[data-tab="trabajo"]{--tc:#6c8fff;}
+[data-tab="finanzas"]{--tc:#4ecb71;}
+[data-tab="pasatiempo"]{--tc:#f4a553;}
+[data-tab="gimnasia"]{--tc:#e05a7a;}
+[data-tab="objetivos"]{--tc:#b47cf7;}
+
+/* ── MAIN / PANELS ── */
+main{flex:1;padding:26px 32px;}
+.panel{display:none;animation:fadeIn .3s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PANEL HEADER ── */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.pt{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;}
+.pt em{font-style:italic;}
+.btn-add{display:flex;align-items:center;gap:7px;padding:9px 18px;color:#fff;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:opacity .2s,transform .15s;}
+.btn-add:hover{opacity:.85;transform:scale(1.03);}
+
+/* ── SUB-TABS ── */
+.subtabs{display:flex;gap:5px;margin-bottom:22px;flex-wrap:wrap;}
+.stab{padding:8px 20px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s;}
+.stab:hover{border-color:var(--aw);color:var(--aw);}
+.stab.active{background:var(--aw);color:#fff;border-color:var(--aw);}
+.subpanel{display:none;}
+.subpanel.active{display:block;animation:fadeIn .25s ease;}
+
+/* ── CALENDAR ── */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.cal-nav-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;}
+.cal-nav-title em{font-style:italic;color:var(--ac);}
+.cal-nav-btns{display:flex;gap:8px;}
+.cal-nav-btns button{padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--soft);font-family:'DM Sans',sans-serif;font-size:.83rem;cursor:pointer;transition:all .2s;}
+.cal-nav-btns button:hover{border-color:var(--ac);color:var(--ac);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:24px;}
+.cal-dow{text-align:center;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;padding:8px 0;}
+.cal-day{background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:72px;padding:7px;cursor:pointer;transition:all .2s;position:relative;}
+.cal-day:hover{border-color:var(--ac);background:var(--surface2);}
+.cal-day.today{border-color:var(--ac);background:#0e2929;}
+.cal-day.other-month{opacity:.35;}
+.cal-day.selected{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)44;}
+.cal-day-num{font-size:.8rem;font-weight:600;color:var(--soft);margin-bottom:4px;}
+.cal-day.today .cal-day-num{color:var(--ac);}
+.cal-dots{display:flex;flex-wrap:wrap;gap:3px;}
+.cal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px;}
+.cal-legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);}
+.cal-legend-dot{width:8px;height:8px;border-radius:50%;}
+.cal-detail{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.cal-detail-title{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:14px;}
+.cal-event-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.cal-event-item:last-child{border-bottom:none;}
+.cal-event-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.cal-event-info{flex:1;}
+.cal-event-title{font-size:.9rem;font-weight:600;}
+.cal-event-meta{font-size:.76rem;color:var(--muted);margin-top:2px;}
+/* birthday import */
+.bday-import{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px;}
+.bday-import h4{font-size:.9rem;font-weight:600;margin-bottom:6px;}
+.bday-import p{font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.6;}
+.bday-import textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;resize:vertical;min-height:80px;}
+.bday-import textarea:focus{border-color:var(--aw);}
+.bday-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.bday-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.bday-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--aw),var(--ao));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.bday-name{font-weight:600;font-size:.88rem;}
+.bday-date{font-size:.76rem;color:var(--muted);margin-top:2px;}
+
+/* ── CARDS ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;transition:border-color .2s;}
+.card:hover{border-color:var(--aw);}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.card-title{font-weight:600;font-size:.95rem;line-height:1.4;}
+.card-meta{font-size:.76rem;color:var(--muted);margin-top:3px;line-height:1.6;}
+.card-desc{font-size:.83rem;color:var(--soft);line-height:1.6;margin-top:7px;}
+.card-actions{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;}
+.badge{padding:3px 9px;border-radius:50px;font-size:.7rem;font-weight:600;white-space:nowrap;}
+.b-pending{background:#2a2518;color:#f4a553;}
+.b-done{background:#152018;color:#4ecb71;}
+.b-urgent{background:#281520;color:#e05a7a;}
+.b-progress{background:#1a1a2e;color:#6c8fff;}
+.b-confirmed{background:#152018;color:#4ecb71;}
+.b-cancelled{background:#281520;color:#e05a7a;}
+.b-waitlist{background:#2a1f10;color:#f4a553;}
+.b-sent{background:#1a1a2e;color:#6c8fff;}
+.b-received{background:#152018;color:#4ecb71;}
+.b-partial{background:#2a2518;color:#f4a553;}
+.btn-sm{padding:5px 12px;border-radius:7px;font-size:.76rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--soft);transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.btn-sm:hover{background:var(--aw);color:#fff;border-color:var(--aw);}
+.btn-sm.d:hover{background:var(--ag);color:#fff;border-color:var(--ag);}
+.btn-sm.g:hover{background:var(--af);color:#fff;border-color:var(--af);}
+
+/* ── RESERVATIONS ── */
+.res-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.rs{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.rs-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--aw);}
+.rs-lbl{font-size:.7rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+.res-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s;}
+.res-card:hover{border-color:var(--aw);}
+.res-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.res-tnum{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--aw);line-height:1;}
+.res-tlbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px;}
+.res-body{padding:14px 18px;}
+.res-name{font-weight:600;font-size:.97rem;margin-bottom:5px;}
+.res-info{font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;gap:3px;}
+.menu-wrap{margin-top:12px;border-top:1px solid var(--border);padding-top:12px;}
+.menu-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px;}
+.menu-badge{display:inline-block;background:#1a1a2e;color:var(--aw);border-radius:50px;padding:2px 10px;font-size:.7rem;font-weight:700;margin-bottom:8px;}
+.menu-row{display:flex;gap:9px;margin-bottom:5px;}
+.menu-course{font-size:.68rem;color:var(--aw);font-weight:700;text-transform:uppercase;letter-spacing:.4px;min-width:60px;padding-top:2px;}
+.menu-dish{font-size:.82rem;color:var(--soft);line-height:1.4;}
+.menu-note{margin-top:9px;font-size:.78rem;color:var(--muted);background:var(--surface2);border-radius:7px;padding:7px 11px;}
+
+/* ── ORDERS ── */
+.order-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;transition:border-color .2s;}
+.order-card:hover{border-color:var(--aw);}
+.order-items{margin-top:10px;border-top:1px solid var(--border);padding-top:10px;}
+.order-item-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)44;font-size:.83rem;}
+.order-item-row:last-child{border-bottom:none;}
+.order-total{display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-weight:700;font-size:.9rem;}
+
+/* ── CITAS / APPOINTMENTS ── */
+.cita-card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--ac);border-radius:var(--r);padding:18px;transition:border-color .2s;}
+.cita-card:hover{border-color:var(--ac);}
+.cita-time{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--ac);}
+.cita-countdown{font-size:.75rem;color:var(--muted);margin-top:2px;}
+
+/* ── FINANCE ── */
+.fin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.fsc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center;}
+.fsc-lbl{font-size:.74rem;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.7px;}
+.fsc-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;}
+.pos{color:#4ecb71;}.neg{color:#e05a7a;}.neu{color:#6c8fff;}
+.ftabs{display:flex;gap:7px;margin-bottom:18px;}
+.ftab{padding:7px 18px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;}
+.ftab.active,.ftab:hover{background:var(--af);color:#fff;border-color:var(--af);}
+
+/* ── GYM ── */
+.gym-week{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:24px;}
+.day-cell{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s;}
+.day-cell:hover,.day-cell.done{border-color:var(--ag);background:#28111a;}
+.day-cell.today{border-color:var(--ag);}
+.dn{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.dd{font-size:1rem;font-weight:600;margin-top:3px;}
+.day-dot{width:5px;height:5px;background:var(--ag);border-radius:50%;margin:5px auto 0;}
+
+/* ── GOALS ── */
+.goal-card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--ao);border-radius:var(--r);padding:20px;margin-bottom:14px;}
+.prog-bar{height:4px;background:var(--surface2);border-radius:50px;overflow:hidden;margin-top:10px;}
+.prog-fill{height:100%;border-radius:50px;background:var(--ao);transition:width .5s ease;}
+
+/* ── FILTER BAR ── */
+.fbar{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.fbar input{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;width:190px;}
+.fbar input:focus{border-color:var(--aw);}
+.fbtn{padding:7px 15px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s;}
+.fbtn.active,.fbtn:hover{background:var(--aw)22;color:var(--aw);border-color:var(--aw);}
+
+/* ── MODAL ── */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+.mo.open{display:flex;}
+.mbox{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;animation:fadeIn .22s ease;}
+.mbox::-webkit-scrollbar{width:3px;}.mbox::-webkit-scrollbar-thumb{background:var(--border);}
+.mbox h3{font-family:'Playfair Display',serif;font-size:1.35rem;margin-bottom:20px;}
+.mbox h3 span{font-style:italic;}
+.fg{margin-bottom:13px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.fg label{display:block;font-size:.76rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;resize:none;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--aw);}
+.fg select option{background:var(--surface2);}
+.fsec{font-size:.76rem;color:var(--aw);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin:16px 0 11px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.mact{display:flex;gap:9px;margin-top:20px;justify-content:flex-end;}
+.mcancel{padding:9px 20px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;}
+.msave{padding:9px 22px;border-radius:9px;border:none;background:var(--aw);color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:opacity .2s;}
+.msave:hover{opacity:.85;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:28px;right:28px;background:#1a2a1a;border:1px solid #4ecb71;border-radius:12px;padding:13px 20px;font-size:.85rem;color:#4ecb71;z-index:999;display:none;animation:fadeIn .3s ease;max-width:320px;line-height:1.5;}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty .ei{font-size:2.2rem;margin-bottom:10px;}
+.empty p{font-size:.88rem;}
+
+@media(max-width:640px){
+  header{padding:16px 14px 0;}
+  .tabs-bar{padding:14px 14px 0;}
+  main{padding:18px 14px;}
+  .tab-btn{padding:9px 12px;font-size:.8rem;}
+  .fin-stats{grid-template-columns:1fr 1fr;}
+  .res-stats{grid-template-columns:1fr 1fr;}
+  .gym-week{gap:4px;}
+  .day-cell{padding:7px 3px;}
+  .frow{grid-template-columns:1fr;}
+  .cal-grid{gap:1px;}
+  .cal-day{min-height:52px;padding:4px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Mi <span>Agenda</span></div>
+  <div class="header-right">
+    <div class="date-badge" id="currentDate"></div>
+    <button id="notif-btn" onclick="toggleNotifications()">🔔 Notificaciones</button>
+  </div>
+</header>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" data-tab="calendario" onclick="switchTab('calendario',this)"><span>📅</span> Calendario</button>
+  <button class="tab-btn" data-tab="trabajo" onclick="switchTab('trabajo',this)"><span>💼</span> Trabajo</button>
+  <button class="tab-btn" data-tab="finanzas" onclick="switchTab('finanzas',this)"><span>💶</span> Finanzas</button>
+  <button class="tab-btn" data-tab="pasatiempo" onclick="switchTab('pasatiempo',this)"><span>🎨</span> Pasatiempos</button>
+  <button class="tab-btn" data-tab="gimnasia" onclick="switchTab('gimnasia',this)"><span>🏋️</span> Gimnasia</button>
+  <button class="tab-btn" data-tab="objetivos" onclick="switchTab('objetivos',this)"><span>🎯</span> Objetivos</button>
+</div>
+
+<main>
+
+<!-- ═══ CALENDARIO ═══ -->
+<div id="panel-calendario" class="panel active">
+  <div class="ph">
+    <div class="pt">Calendario <em style="color:var(--ac)">& Eventos</em></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-add" onclick="openModal('cita')" style="background:var(--ac)">+ Cita</button>
+      <button class="btn-add" onclick="openModal('evento')" style="background:var(--ao)">+ Evento</button>
+    </div>
+  </div>
+
+  <!-- Sub-tabs: Mes / Cumpleaños -->
+  <div class="subtabs">
+    <button class="stab active" style="--sc:var(--ac)" onclick="switchCalTab('mes',this)">🗓 Vista mensual</button>
+    <button class="stab" onclick="switchCalTab('cumple',this)">🎂 Cumpleaños</button>
+  </div>
+
+  <!-- Vista mensual -->
+  <div class="subpanel active" id="sub-mes">
+    <div class="cal-nav">
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--ac)"></div>Citas</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--ao)"></div>Eventos</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--aw)"></div>Reservas</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#e05a7a"></div>Entrenos</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#f4553a"></div>Cumpleaños</div>
+      </div>
+      <div class="cal-nav-btns">
+        <button onclick="calPrev()">◀</button>
+        <button onclick="calToday()">Hoy</button>
+        <button onclick="calNext()">▶</button>
+      </div>
+    </div>
+    <div class="cal-nav" style="margin-bottom:12px">
+      <div class="cal-nav-title" id="cal-month-label">Mayo <em>2026</em></div>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-dow">Dom</div><div class="cal-dow">Lun</div><div class="cal-dow">Mar</div>
+      <div class="cal-dow">Mié</div><div class="cal-dow">Jue</div><div class="cal-dow">Vie</div><div class="cal-dow">Sáb</div>
+    </div>
+    <div class="cal-grid" id="cal-cells" style="margin-top:0"></div>
+    <div class="cal-detail" id="cal-detail" style="display:none;margin-top:18px">
+      <div class="cal-detail-title" id="cal-detail-date"></div>
+      <div id="cal-detail-events"></div>
+    </div>
+  </div>
+
+  <!-- Cumpleaños -->
+  <div class="subpanel" id="sub-cumple">
+    <div class="bday-import">
+      <h4>📥 Importar cumpleaños desde Facebook</h4>
+      <p>En Facebook → Eventos → Cumpleaños, copia los nombres y fechas y pégalos aquí.<br>
+      Formato admitido: <code style="color:var(--aw);font-size:.8rem">Nombre Apellido - 15 de marzo</code> (uno por línea)</p>
+      <textarea id="bday-import-text" placeholder="Ejemplo:&#10;Ana García - 15 de marzo&#10;Carlos López - 3 de julio&#10;María Ruiz - 28 de diciembre"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn-add" onclick="importBirthdays()" style="background:var(--aw)">Importar</button>
+        <button class="btn-add" onclick="openModal('cumple')" style="background:var(--ao)">+ Añadir manual</button>
+      </div>
+    </div>
+    <div class="bday-list" id="bday-list"></div>
+  </div>
+</div>
+
+<!-- ═══ TRABAJO ═══ -->
+<div id="panel-trabajo" class="panel">
+  <div class="ph">
+    <div class="pt">Trabajo <em style="color:var(--aw)">& Servicio</em></div>
+    <button class="btn-add" id="trabajo-add-btn" onclick="onTrabajoAdd()" style="background:var(--aw)">+ Nueva tarea</button>
+  </div>
+  <div class="subtabs">
+    <button class="stab active" onclick="switchWorkTab('tareas',this)">📋 Tareas</button>
+    <button class="stab" onclick="switchWorkTab('reservas',this)">🍽️ Reservas</button>
+    <button class="stab" onclick="switchWorkTab('pedidos',this)">📦 Pedidos</button>
+  </div>
+  <div class="subpanel active" id="sub-tareas"><div class="grid" id="list-trabajo"></div></div>
+  <div class="subpanel" id="sub-reservas">
+    <div class="res-stats">
+      <div class="rs"><div class="rs-val" id="rs-total">0</div><div class="rs-lbl">Hoy</div></div>
+      <div class="rs"><div class="rs-val" id="rs-pax">0</div><div class="rs-lbl">Comensales</div></div>
+      <div class="rs"><div class="rs-val" id="rs-conf">0</div><div class="rs-lbl">Confirmadas</div></div>
+      <div class="rs"><div class="rs-val" id="rs-tables">0</div><div class="rs-lbl">Mesas</div></div>
+    </div>
+    <div class="fbar">
+      <input type="text" id="res-search" placeholder="🔍 Cliente o mesa…" oninput="renderReservas()">
+      <button class="fbtn active" data-rf="all" onclick="setRF('all',this)">Todas</button>
+      <button class="fbtn" data-rf="confirmed" onclick="setRF('confirmed',this)">Confirmadas</button>
+      <button class="fbtn" data-rf="pending" onclick="setRF('pending',this)">Pendientes</button>
+      <button class="fbtn" data-rf="cancelled" onclick="setRF('cancelled',this)">Canceladas</button>
+    </div>
+    <div class="grid" id="list-reservas"></div>
+  </div>
+  <div class="subpanel" id="sub-pedidos">
+    <div class="fbar">
+      <input type="text" id="ped-search" placeholder="🔍 Proveedor o producto…" oninput="renderPedidos()">
+      <button class="fbtn active" data-pf="all" onclick="setPF('all',this)">Todos</button>
+      <button class="fbtn" data-pf="pending" onclick="setPF('pending',this)">Enviados</button>
+      <button class="fbtn" data-pf="received" onclick="setPF('received',this)">Recibidos</button>
+      <button class="fbtn" data-pf="partial" onclick="setPF('partial',this)">Parciales</button>
+    </div>
+    <div class="grid" id="list-pedidos"></div>
+  </div>
+</div>
+
+<!-- ═══ FINANZAS ═══ -->
+<div id="panel-finanzas" class="panel">
+  <div class="ph">
+    <div class="pt">Finanzas <em style="color:var(--af)">Personales</em></div>
+    <button class="btn-add" onclick="openModal('finanzas')" style="background:var(--af)">+ Añadir</button>
+  </div>
+  <div class="fin-stats">
+    <div class="fsc"><div class="fsc-lbl">Cobros</div><div class="fsc-val pos" id="st-cobros">€0</div></div>
+    <div class="fsc"><div class="fsc-lbl">Pagos</div><div class="fsc-val neg" id="st-pagos">€0</div></div>
+    <div class="fsc"><div class="fsc-lbl">Balance</div><div class="fsc-val neu" id="st-bal">€0</div></div>
+  </div>
+  <div class="ftabs">
+    <button class="ftab active" onclick="filterFin('todo',this)">Todo</button>
+    <button class="ftab" onclick="filterFin('cobro',this)">Cobros</button>
+    <button class="ftab" onclick="filterFin('pago',this)">Pagos</button>
+  </div>
+  <div class="grid" id="list-finanzas"></div>
+</div>
+
+<!-- ═══ PASATIEMPOS ═══ -->
+<div id="panel-pasatiempo" class="panel">
+  <div class="ph">
+    <div class="pt">Pasatiempos <em style="color:var(--ah)">& Ocio</em></div>
+    <button class="btn-add" onclick="openModal('pasatiempo')" style="background:var(--ah)">+ Añadir</button>
+  </div>
+  <div class="grid" id="list-pasatiempo"></div>
+</div>
+
+<!-- ═══ GIMNASIA ═══ -->
+<div id="panel-gimnasia" class="panel">
+  <div class="ph">
+    <div class="pt">Gimnasia <em style="color:var(--ag)">& Salud</em></div>
+    <button class="btn-add" onclick="openModal('gimnasia')" style="background:var(--ag)">+ Añadir</button>
+  </div>
+  <div class="gym-week" id="gym-week"></div>
+  <div class="grid" id="list-gimnasia"></div>
+</div>
+
+<!-- ═══ OBJETIVOS ═══ -->
+<div id="panel-objetivos" class="panel">
+  <div class="ph">
+    <div class="pt">Mis <em style="color:var(--ao)">Objetivos</em></div>
+    <button class="btn-add" onclick="openModal('objetivos')" style="background:var(--ao)">+ Nuevo</button>
+  </div>
+  <div id="list-objetivos"></div>
+</div>
+
+</main>
+
+<!-- ═══ MODAL ═══ -->
+<div class="mo" id="MO">
+  <div class="mbox">
+    <h3 id="mTitle">Añadir <span id="mAccent" style="color:var(--aw)">elemento</span></h3>
+    <div id="mFields"></div>
+    <div class="mact">
+      <button class="mcancel" onclick="closeModal()">Cancelar</button>
+      <button class="msave" id="mSave" onclick="saveItem()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+const KEY = 'agenda_v5';
+const TODAY = new Date();
+const TISO  = TODAY.toISOString().split('T')[0];
+
+let S = JSON.parse(localStorage.getItem(KEY)||'null') || {
+  citas:[
+    {id:1,title:'Revisión médica',date:'2026-05-28',time:'10:30',notif:30,desc:'Centro de salud Alameda.',color:'cita'},
+    {id:2,title:'Reunión con gestor',date:'2026-06-03',time:'17:00',notif:60,desc:'Repaso cuentas trimestrales.',color:'cita'}
+  ],
+  eventos:[
+    {id:1,title:'Feria Gastronómica Madrid',date:'2026-06-14',time:'10:00',desc:'Stand B-22, pabellón 4.',color:'evento'}
+  ],
+  cumples:[
+    {id:1,name:'Ana García',date:'03-15',emoji:'🎂'},
+    {id:2,name:'Carlos López',date:'07-03',emoji:'🎂'},
+    {id:3,name:'María Ruiz',date:'12-28',emoji:'🎂'}
+  ],
+  trabajo:[
+    {id:1,title:'Reunión con proveedor',date:'2026-05-26',status:'pending',desc:'Revisar propuesta Q3.'},
+    {id:2,title:'Informe mensual costos',date:'2026-05-30',status:'progress',desc:'Actualizar escandallo.'},
+    {id:3,title:'Formación equipo sala',date:'2026-06-02',status:'done',desc:'Sesión servicio y protocolo.'}
+  ],
+  reservas:[
+    {id:1,client:'Familia García',table:4,pax:6,date:'2026-05-25',time:'14:00',status:'confirmed',phone:'612 345 678',notes:'Alergia al gluten (1 persona)',menuName:'Menú Degustación Primavera',menu:[{course:'Aperitivo',dish:'Gazpacho de remolacha'},{course:'Principal',dish:'Lubina al vapor con emulsión de algas'},{course:'Postre',dish:'Torrija caramelizada'}]},
+    {id:2,client:'Sr. Morales (empresa)',table:2,pax:4,date:'2026-05-25',time:'14:30',status:'confirmed',phone:'699 001 122',notes:'Mesa de negocios',menuName:'Menú Ejecutivo',menu:[{course:'Entrante',dish:'Tabla de ibéricos'},{course:'Principal',dish:'Secreto ibérico'},{course:'Postre',dish:'Postres de temporada'}]},
+    {id:3,client:'Cumpleaños Lucía R.',table:7,pax:10,date:'2026-05-25',time:'21:00',status:'pending',phone:'655 789 000',notes:'Tarta de cumpleaños encargada',menuName:'Menú Celebración',menu:[{course:'Aperitivo',dish:'Croquetas de jamón'},{course:'Principal',dish:'Entrecot madurado'},{course:'Postre',dish:'Tarta de chocolate'}]},
+    {id:4,client:'Pareja Romero',table:1,pax:2,date:'2026-05-26',time:'21:30',status:'confirmed',phone:'611 222 333',notes:'Aniversario. Rosa en la mesa.',menuName:'Menú Romántico',menu:[{course:'Aperitivo',dish:'Ostras finas'},{course:'Pescado',dish:'Vieiras a la plancha'},{course:'Carne',dish:'Solomillo Wellington'},{course:'Postre',dish:'Coulant de chocolate'}]}
+  ],
+  pedidos:[
+    {id:1,supplier:'Carnicería Hermanos Ruiz',date:'2026-05-24',status:'received',items:[{name:'Secreto ibérico',qty:'5 kg',price:62},{name:'Carrilleras',qty:'3 kg',price:28}],notes:'Entrega puntual.'},
+    {id:2,supplier:'Pescadería Atlántico',date:'2026-05-26',status:'pending',items:[{name:'Lubina salvaje',qty:'4 kg',price:88},{name:'Vieiras',qty:'2 kg',price:54}],notes:'Confirmar hora entrega.'},
+    {id:3,supplier:'Verduras El Huerto',date:'2026-05-25',status:'partial',items:[{name:'Rúcula',qty:'1 kg',price:8},{name:'Remolacha',qty:'2 kg',price:6},{name:'Espárragos',qty:'1 kg',price:14}],notes:'Faltan espárragos, llegan mañana.'}
+  ],
+  finanzas:[
+    {id:1,title:'Nómina mayo',amount:2400,type:'cobro',date:'2026-05-28',status:'pending',desc:''},
+    {id:2,title:'Alquiler',amount:950,type:'pago',date:'2026-06-01',status:'pending',desc:''},
+    {id:3,title:'Factura proveedor',amount:320,type:'pago',date:'2026-05-25',status:'done',desc:'Carnicería Hermanos Ruiz.'},
+    {id:4,title:'Ingreso extra catering',amount:600,type:'cobro',date:'2026-05-24',status:'done',desc:'Evento corporativo 24/05.'}
+  ],
+  pasatiempo:[
+    {id:1,title:'Fotografía gastronómica',date:'2026-05-25',status:'progress',desc:'Sesión de platos nuevos para Instagram.'},
+    {id:2,title:'Leer: "El Comensal"',date:'2026-06-10',status:'pending',desc:'Terminar los últimos 3 capítulos.'}
+  ],
+  gimnasia:[
+    {id:1,title:'Cardio + Core',date:'2026-05-24',done:true,duration:'45 min',desc:'Bici 20 min + plancha.'},
+    {id:2,title:'Tren superior',date:'2026-05-26',done:false,duration:'60 min',desc:'Pecho, espalda, bíceps.'},
+    {id:3,title:'Piernas',date:'2026-05-28',done:false,duration:'50 min',desc:'Sentadillas, prensa, femoral.'}
+  ],
+  objetivos:[
+    {id:1,title:'Abrir sección menús degustación',deadline:'2026-09-01',progress:30,desc:'Diseñar 3 menús temáticos estacionales.'},
+    {id:2,title:'Certificación gestión hostelera',deadline:'2026-12-31',progress:15,desc:'Curso online 60 horas.'},
+    {id:3,title:'Perder 5 kg',deadline:'2026-08-01',progress:40,desc:'Dieta y entrenos regulares.'}
+  ]
+};
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+
+// ── Date header ──
+const DNAMES=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MNAMES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+document.getElementById('currentDate').textContent =
+  `${DNAMES[TODAY.getDay()]}, ${TODAY.getDate()} de ${MNAMES[TODAY.getMonth()]} ${TODAY.getFullYear()}`;
+
+// ══════════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════════════════════
+let notifEnabled = false;
+let notifTimers  = [];
+
+function toggleNotifications(){
+  if(!('Notification' in window)){ showToast('Tu navegador no soporta notificaciones.'); return; }
+  if(Notification.permission === 'granted'){ notifEnabled = !notifEnabled; applyNotifState(); }
+  else if(Notification.permission === 'denied'){ showToast('Notificaciones bloqueadas. Actívalas en la configuración del navegador.'); }
+  else { Notification.requestPermission().then(p=>{ if(p==='granted'){ notifEnabled=true; applyNotifState(); } }); }
+}
+
+function applyNotifState(){
+  const btn = document.getElementById('notif-btn');
+  if(notifEnabled){
+    btn.classList.add('enabled'); btn.textContent='🔔 Notificaciones ON';
+    showToast('✅ Notificaciones activadas'); scheduleAllNotifications();
+  } else {
+    btn.classList.remove('enabled'); btn.textContent='🔔 Notificaciones';
+    notifTimers.forEach(clearTimeout); notifTimers=[];
+    showToast('🔕 Notificaciones desactivadas');
+  }
+}
+
+function scheduleAllNotifications(){
+  notifTimers.forEach(clearTimeout); notifTimers=[];
+  const all = [...S.citas, ...S.eventos];
+  all.forEach(item=>{
+    const mins = item.notif || 30;
+    const dt = new Date(`${item.date}T${item.time||'09:00'}`);
+    const fire = dt.getTime() - mins*60000;
+    const delay = fire - Date.now();
+    if(delay > 0){
+      const t = setTimeout(()=>{
+        if(notifEnabled && Notification.permission==='granted'){
+          new Notification(`📅 ${item.title}`, {
+            body: `En ${mins} minutos · ${item.time||''} · ${item.desc||''}`,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📅</text></svg>'
+          });
+        }
+      }, delay);
+      notifTimers.push(t);
+    }
+  });
+}
+
+function showToast(msg, dur=3500){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display='block';
+  setTimeout(()=>{ t.style.display='none'; }, dur);
+}
+
+// ══════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════════════════════════
+let curTab='calendario', curWorkTab='tareas', curCalTab='mes';
+let curFinFilter='todo', curResFilter='all', curPedFilter='all';
+
+function switchTab(tab, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  btn.classList.add('active'); curTab=tab; render(tab);
+}
+
+function switchCalTab(sub, btn){
+  curCalTab=sub;
+  document.querySelectorAll('#panel-calendario .stab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#panel-calendario .subpanel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sub-'+sub).classList.add('active');
+  if(sub==='mes') renderCalendar();
+  else renderBirthdays();
+}
+
+function switchWorkTab(sub, btn){
+  curWorkTab=sub;
+  document.querySelectorAll('#panel-trabajo .stab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#panel-trabajo .subpanel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sub-'+sub).classList.add('active');
+  const addBtn = document.getElementById('trabajo-add-btn');
+  const labels = {tareas:'+ Nueva tarea', reservas:'+ Nueva reserva', pedidos:'+ Nuevo pedido'};
+  const modals = {tareas:'trabajo', reservas:'reservas', pedidos:'pedidos'};
+  addBtn.textContent = labels[sub];
+  addBtn.onclick = ()=>openModal(modals[sub]);
+  if(sub==='tareas') renderTrabajo();
+  else if(sub==='reservas') renderReservas();
+  else renderPedidos();
+}
+
+function onTrabajoAdd(){
+  const m={tareas:'trabajo',reservas:'reservas',pedidos:'pedidos'};
+  openModal(m[curWorkTab]);
+}
+
+function setRF(f,btn){ curResFilter=f; document.querySelectorAll('[data-rf]').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderReservas(); }
+function setPF(f,btn){ curPedFilter=f; document.querySelectorAll('[data-pf]').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderPedidos(); }
+function filterFin(f,btn){ curFinFilter=f; document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderFinanzas(); }
+
+function render(tab){
+  if(tab==='calendario'){ if(curCalTab==='mes') renderCalendar(); else renderBirthdays(); }
+  else if(tab==='trabajo'){
+    renderTrabajo();
+    if(curWorkTab==='reservas') renderReservas();
+    else if(curWorkTab==='pedidos') renderPedidos();
+  }
+  else if(tab==='finanzas') renderFinanzas();
+  else if(tab==='pasatiempo') renderPasatiempo();
+  else if(tab==='gimnasia') renderGimnasia();
+  else if(tab==='objetivos') renderObjetivos();
+}
+
+// ══════════════════════════════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════════════════════════════
+let calYear = TODAY.getFullYear(), calMonth = TODAY.getMonth();
+let selDay = null;
+
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+function calToday(){ calYear=TODAY.getFullYear(); calMonth=TODAY.getMonth(); renderCalendar(); }
+
+function getEventsForDate(iso){
+  const events=[];
+  S.citas.filter(c=>c.date===iso).forEach(c=>events.push({...c,_type:'cita',color:'var(--ac)'}));
+  S.eventos.filter(e=>e.date===iso).forEach(e=>events.push({...e,_type:'evento',color:'var(--ao)'}));
+  S.reservas.filter(r=>r.date===iso&&r.status!=='cancelled').forEach(r=>events.push({...r,_type:'reserva',color:'var(--aw)',title:`Mesa ${r.table}: ${r.client}`}));
+  S.gimnasia.filter(g=>g.date===iso&&g.done).forEach(g=>events.push({...g,_type:'gym',color:'var(--ag)'}));
+  // birthdays
+  const md = iso.slice(5); // MM-DD
+  S.cumples.filter(b=>b.date===md).forEach(b=>events.push({title:`🎂 ${b.name}`,_type:'cumple',color:'#f4553a',time:''}));
+  return events;
+}
+
+function renderCalendar(){
+  const MNAMES_ES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('cal-month-label').innerHTML = `${MNAMES_ES[calMonth]} <em>${calYear}</em>`;
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrev  = new Date(calYear, calMonth, 0).getDate();
+  let html='';
+  // prev month padding
+  for(let i=first-1; i>=0; i--){
+    const d = daysInPrev-i;
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+  for(let d=1; d<=daysInMonth; d++){
+    const iso = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const evs = getEventsForDate(iso);
+    const isToday = iso===TISO;
+    const isSel   = iso===selDay;
+    const dots = evs.map(e=>`<div class="cal-dot" style="background:${e.color}"></div>`).join('');
+    html += `<div class="cal-day ${isToday?'today':''} ${isSel?'selected':''}" onclick="selectDay('${iso}')">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-dots">${dots}</div>
+    </div>`;
+  }
+  // next month padding
+  const total = first + daysInMonth;
+  const remaining = total%7===0?0:7-(total%7);
+  for(let d=1; d<=remaining; d++){
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+  document.getElementById('cal-cells').innerHTML = html;
+  if(selDay) showDayDetail(selDay);
+}
+
+function selectDay(iso){
+  selDay = (selDay===iso)?null:iso;
+  renderCalendar();
+  if(selDay) showDayDetail(iso); else document.getElementById('cal-detail').style.display='none';
+}
+
+function showDayDetail(iso){
+  const [y,m,d] = iso.split('-');
+  const dow = new Date(parseInt(y),parseInt(m)-1,parseInt(d)).getDay();
+  document.getElementById('cal-detail-date').textContent = `${DNAMES[dow]}, ${parseInt(d)} de ${MNAMES[parseInt(m)-1]} ${y}`;
+  const evs = getEventsForDate(iso);
+  const det = document.getElementById('cal-detail');
+  det.style.display='block';
+  if(!evs.length){
+    document.getElementById('cal-detail-events').innerHTML='<div style="color:var(--muted);font-size:.85rem;padding:10px 0">Sin eventos este día.</div>';
+    return;
+  }
+  document.getElementById('cal-detail-events').innerHTML = evs.map(e=>`
+    <div class="cal-event-item">
+      <div class="cal-event-dot" style="background:${e.color}"></div>
+      <div class="cal-event-info">
+        <div class="cal-event-title">${esc(e.title)}</div>
+        <div class="cal-event-meta">${e.time?'🕐 '+e.time+' · ':''}${e.desc?esc(e.desc):''}</div>
+      </div>
+      ${e._type!=='reserva'&&e._type!=='gym'&&e._type!=='cumple'?
+        `<button class="btn-sm d" onclick="deleteCalEvent('${e._type}',${e.id})">✕</button>`:''}
+    </div>`).join('');
+}
+
+function deleteCalEvent(type,id){
+  if(!confirm('¿Eliminar este evento?')) return;
+  if(type==='cita') S.citas=S.citas.filter(x=>x.id!==id);
+  else S.eventos=S.eventos.filter(x=>x.id!==id);
+  save(); renderCalendar();
+}
+
+// ══════════════════════════════════════════════════════════════
+// BIRTHDAYS
+// ══════════════════════════════════════════════════════════════
+const MONTH_NAMES_ES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const MONTH_MAP={'enero':'01','febrero':'02','marzo':'03','abril':'04','mayo':'05','junio':'06','julio':'07','agosto':'08','septiembre':'09','octubre':'10','noviembre':'11','diciembre':'12'};
+
+function importBirthdays(){
+  const text = document.getElementById('bday-import-text').value.trim();
+  if(!text){ showToast('Pega primero el texto de cumpleaños.'); return; }
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  let count=0;
+  lines.forEach(line=>{
+    // formats: "Nombre - 15 de marzo" or "Nombre: 15 de marzo" or "Nombre 15 de marzo"
+    const m = line.match(/^(.+?)[\s\-–:]+(\d{1,2})\s+de\s+(\w+)/i);
+    if(m){
+      const name = m[1].trim();
+      const day  = m[2].padStart(2,'0');
+      const mon  = MONTH_MAP[(m[3]||'').toLowerCase()];
+      if(name && mon){
+        // avoid duplicates
+        if(!S.cumples.find(b=>b.name.toLowerCase()===name.toLowerCase())){
+          S.cumples.push({id:Date.now()+count,name,date:`${mon}-${day}`,emoji:'🎂'});
+          count++;
+        }
+      }
+    }
+  });
+  save();
+  document.getElementById('bday-import-text').value='';
+  renderBirthdays();
+  showToast(`✅ ${count} cumpleaños importados`);
+}
+
+function renderBirthdays(){
+  const c = document.getElementById('bday-list');
+  if(!S.cumples.length){ c.innerHTML=empty('🎂','Sin cumpleaños registrados.'); return; }
+  const sorted = [...S.cumples].sort((a,b)=>{
+    const [am,ad]=a.date.split('-').map(Number);
+    const [bm,bd]=b.date.split('-').map(Number);
+    return am!==bm?am-bm:ad-bd;
+  });
+  c.innerHTML = sorted.map(b=>{
+    const [mm,dd]=b.date.split('-');
+    const label=`${parseInt(dd)} de ${MONTH_NAMES_ES[parseInt(mm)-1]}`;
+    const initials=b.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return `<div class="bday-card">
+      <div class="bday-avatar">${initials}</div>
+      <div style="flex:1">
+        <div class="bday-name">${esc(b.name)}</div>
+        <div class="bday-date">🎂 ${label}</div>
+      </div>
+      <button class="btn-sm d" onclick="deleteBday(${b.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteBday(id){
+  S.cumples=S.cumples.filter(x=>x.id!==id);
+  save(); renderBirthdays();
+}
+
+// ══════════════════════════════════════════════════════════════
+// BADGES / HELPERS
+// ══════════════════════════════════════════════════════════════
+function sBadge(s){
+  const m={pending:['b-pending','Pendiente'],done:['b-done','Completado'],progress:['b-progress','En curso'],urgent:['b-urgent','Urgente']};
+  const[cls,lbl]=m[s]||['b-pending','Pendiente'];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function rBadge(s){
+  const m={confirmed:['b-confirmed','✓ Confirmada'],pending:['b-pending','⏳ Pendiente'],cancelled:['b-cancelled','✕ Cancelada'],waitlist:['b-waitlist','Lista espera']};
+  const[cls,lbl]=m[s]||['b-pending','Pendiente'];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function pBadge(s){
+  const m={pending:['b-sent','Enviado'],received:['b-received','Recibido'],partial:['b-partial','Parcial'],cancelled:['b-cancelled','Cancelado']};
+  const[cls,lbl]=m[s]||['b-sent','Enviado'];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function fmtDate(iso){ if(!iso)return'—'; const[y,m,d]=iso.split('-'); return`${d}/${m}/${y}`; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function empty(ic,msg){ return`<div class="empty" style="grid-column:1/-1"><div class="ei">${ic}</div><p>${msg}</p></div>`; }
+
+// ══════════════════════════════════════════════════════════════
+// RENDER TAREAS
+// ══════════════════════════════════════════════════════════════
+function renderTrabajo(){
+  const c=document.getElementById('list-trabajo');
+  if(!S.trabajo.length){c.innerHTML=empty('💼','Sin tareas.');return;}
+  c.innerHTML=S.trabajo.map(t=>`
+    <div class="card">
+      <div class="card-top"><div><div class="card-title">${esc(t.title)}</div><div class="card-meta">📅 ${fmtDate(t.date)}</div></div>${sBadge(t.status)}</div>
+      ${t.desc?`<div class="card-desc">${esc(t.desc)}</div>`:''}
+      <div class="card-actions">
+        <button class="btn-sm" onclick="toggleSt('trabajo',${t.id})">✓ Estado</button>
+        <button class="btn-sm" onclick="editItem('trabajo',${t.id})">✎ Editar</button>
+        <button class="btn-sm d" onclick="delItem('trabajo',${t.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER RESERVAS
+// ══════════════════════════════════════════════════════════════
+function renderReservas(){
+  const srch=(document.getElementById('res-search')?.value||'').toLowerCase();
+  let list=S.reservas;
+  if(curResFilter!=='all') list=list.filter(r=>r.status===curResFilter);
+  if(srch) list=list.filter(r=>r.client.toLowerCase().includes(srch)||String(r.table).includes(srch));
+  const todayR=S.reservas.filter(r=>r.date===TISO&&r.status!=='cancelled');
+  document.getElementById('rs-total').textContent=todayR.length;
+  document.getElementById('rs-pax').textContent=todayR.reduce((a,r)=>a+r.pax,0);
+  document.getElementById('rs-conf').textContent=todayR.filter(r=>r.status==='confirmed').length;
+  document.getElementById('rs-tables').textContent=[...new Set(todayR.map(r=>r.table))].length;
+  const c=document.getElementById('list-reservas');
+  if(!list.length){c.innerHTML=empty('🍽️','Sin reservas.');return;}
+  c.innerHTML=list.map(r=>{
+    const mHtml=r.menu&&r.menu.length?`
+      <div class="menu-wrap">
+        <div class="menu-lbl">Menú asignado</div>
+        ${r.menuName?`<div class="menu-badge">🍴 ${esc(r.menuName)}</div>`:''}
+        ${r.menu.map(m=>`<div class="menu-row"><span class="menu-course">${esc(m.course)}</span><span class="menu-dish">${esc(m.dish)}</span></div>`).join('')}
+        ${r.notes?`<div class="menu-note">📝 ${esc(r.notes)}</div>`:''}
+      </div>`:(r.notes?`<div class="menu-note" style="margin-top:10px">📝 ${esc(r.notes)}</div>`:'');
+    return`<div class="res-card">
+      <div class="res-head">
+        <div><div class="res-tnum">${r.table}</div><div class="res-tlbl">Mesa nº</div></div>
+        <div style="text-align:right">${rBadge(r.status)}<div style="font-size:.76rem;color:var(--muted);margin-top:5px">📅 ${fmtDate(r.date)} · ${r.time}</div></div>
+      </div>
+      <div class="res-body">
+        <div class="res-name">${esc(r.client)}</div>
+        <div class="res-info"><span>👥 ${r.pax} comensales</span>${r.phone&&r.phone!=='—'?`<span>📞 ${esc(r.phone)}</span>`:''}</div>
+        ${mHtml}
+        <div class="card-actions" style="margin-top:12px">
+          <button class="btn-sm g" onclick="cycleRes(${r.id})">✓ Estado</button>
+          <button class="btn-sm" onclick="editItem('reservas',${r.id})">✎ Editar</button>
+          <button class="btn-sm d" onclick="delItem('reservas',${r.id})">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function cycleRes(id){
+  const r=S.reservas.find(x=>x.id===id); if(!r)return;
+  const cy={pending:'confirmed',confirmed:'cancelled',cancelled:'pending'};
+  r.status=cy[r.status]||'pending'; save(); renderReservas();
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER PEDIDOS
+// ══════════════════════════════════════════════════════════════
+function renderPedidos(){
+  const srch=(document.getElementById('ped-search')?.value||'').toLowerCase();
+  let list=S.pedidos;
+  const statusMap={pending:'pending',received:'received',partial:'partial'};
+  if(curPedFilter!=='all') list=list.filter(p=>p.status===statusMap[curPedFilter]);
+  if(srch) list=list.filter(p=>p.supplier.toLowerCase().includes(srch)||p.items.some(i=>i.name.toLowerCase().includes(srch)));
+  const c=document.getElementById('list-pedidos');
+  if(!list.length){c.innerHTML=empty('📦','Sin pedidos.');return;}
+  c.innerHTML=list.map(p=>{
+    const total=p.items.reduce((a,i)=>a+(i.price||0),0);
+    const itemsHtml=p.items.map(i=>`<div class="order-item-row"><span>${esc(i.name)} <span style="color:var(--muted)">${esc(i.qty||'')}</span></span><span style="color:var(--af)">€${(i.price||0).toFixed(2)}</span></div>`).join('');
+    return`<div class="order-card">
+      <div class="card-top">
+        <div><div class="card-title">${esc(p.supplier)}</div><div class="card-meta">📅 ${fmtDate(p.date)}</div></div>
+        ${pBadge(p.status)}
+      </div>
+      ${p.notes?`<div class="card-desc">${esc(p.notes)}</div>`:''}
+      <div class="order-items">${itemsHtml}</div>
+      <div class="order-total"><span>Total pedido</span><span style="color:var(--af)">€${total.toFixed(2)}</span></div>
+      <div class="card-actions">
+        <button class="btn-sm" onclick="cyclePed(${p.id})">✓ Estado</button>
+        <button class="btn-sm" onclick="editItem('pedidos',${p.id})">✎ Editar</button>
+        <button class="btn-sm d" onclick="delItem('pedidos',${p.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function cyclePed(id){
+  const p=S.pedidos.find(x=>x.id===id); if(!p)return;
+  const cy={pending:'partial',partial:'received',received:'pending'};
+  p.status=cy[p.status]||'pending'; save(); renderPedidos();
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER FINANZAS
+// ══════════════════════════════════════════════════════════════
+function renderFinanzas(){
+  const fil=curFinFilter==='todo'?S.finanzas:S.finanzas.filter(f=>f.type===curFinFilter);
+  const cob=S.finanzas.filter(f=>f.type==='cobro'&&f.status==='done').reduce((a,f)=>a+f.amount,0);
+  const pag=S.finanzas.filter(f=>f.type==='pago'&&f.status==='done').reduce((a,f)=>a+f.amount,0);
+  document.getElementById('st-cobros').textContent=`€${cob.toLocaleString('es')}`;
+  document.getElementById('st-pagos').textContent=`€${pag.toLocaleString('es')}`;
+  const bal=cob-pag;
+  const balEl=document.getElementById('st-bal');
+  balEl.textContent=`${bal>=0?'+':''}€${Math.abs(bal).toLocaleString('es')}`;
+  balEl.className=`fsc-val ${bal>=0?'pos':'neg'}`;
+  const c=document.getElementById('list-finanzas');
+  if(!fil.length){c.innerHTML=empty('💶','Sin movimientos.');return;}
+  c.innerHTML=fil.map(f=>`
+    <div class="card">
+      <div class="card-top">
+        <div><div class="card-title">${esc(f.title)}</div><div class="card-meta">📅 ${fmtDate(f.date)} · ${f.type==='cobro'?'⬆️ Cobro':'⬇️ Pago'}</div></div>
+        <div style="text-align:right"><div style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:${f.type==='cobro'?'var(--af)':'var(--ag)'}">${f.type==='cobro'?'+':'-'}€${f.amount.toLocaleString('es')}</div>${sBadge(f.status)}</div>
+      </div>
+      ${f.desc?`<div class="card-desc">${esc(f.desc)}</div>`:''}
+      <div class="card-actions">
+        <button class="btn-sm" onclick="toggleSt('finanzas',${f.id})">✓ Estado</button>
+        <button class="btn-sm" onclick="editItem('finanzas',${f.id})">✎ Editar</button>
+        <button class="btn-sm d" onclick="delItem('finanzas',${f.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER PASATIEMPOS
+// ══════════════════════════════════════════════════════════════
+function renderPasatiempo(){
+  const c=document.getElementById('list-pasatiempo');
+  if(!S.pasatiempo.length){c.innerHTML=empty('🎨','Sin actividades.');return;}
+  c.innerHTML=S.pasatiempo.map(t=>`
+    <div class="card">
+      <div class="card-top"><div><div class="card-title">${esc(t.title)}</div><div class="card-meta">📅 ${fmtDate(t.date)}</div></div>${sBadge(t.status)}</div>
+      ${t.desc?`<div class="card-desc">${esc(t.desc)}</div>`:''}
+      <div class="card-actions">
+        <button class="btn-sm" onclick="toggleSt('pasatiempo',${t.id})">✓ Estado</button>
+        <button class="btn-sm" onclick="editItem('pasatiempo',${t.id})">✎ Editar</button>
+        <button class="btn-sm d" onclick="delItem('pasatiempo',${t.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER GIMNASIA
+// ══════════════════════════════════════════════════════════════
+function renderGimnasia(){
+  const week=document.getElementById('gym-week');
+  const sd=new Date(TODAY); sd.setDate(TODAY.getDate()-TODAY.getDay());
+  const dn=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  let html='';
+  for(let i=0;i<7;i++){
+    const d=new Date(sd); d.setDate(sd.getDate()+i);
+    const iso=d.toISOString().split('T')[0];
+    const done=S.gimnasia.find(g=>g.date===iso&&g.done);
+    const isT=d.toDateString()===TODAY.toDateString();
+    html+=`<div class="day-cell ${done?'done':''} ${isT?'today':''}" onclick="toggleGymDay('${iso}')"><div class="dn">${dn[i]}</div><div class="dd">${d.getDate()}</div>${done?'<div class="day-dot"></div>':''}</div>`;
+  }
+  week.innerHTML=html;
+  const c=document.getElementById('list-gimnasia');
+  if(!S.gimnasia.length){c.innerHTML=empty('🏋️','Sin entrenamientos.');return;}
+  c.innerHTML=S.gimnasia.map(g=>`
+    <div class="card">
+      <div class="card-top"><div><div class="card-title">${esc(g.title)}</div><div class="card-meta">📅 ${fmtDate(g.date)} · ⏱ ${g.duration}</div></div><span class="badge ${g.done?'b-done':'b-pending'}">${g.done?'Completado':'Pendiente'}</span></div>
+      ${g.desc?`<div class="card-desc">${esc(g.desc)}</div>`:''}
+      <div class="card-actions">
+        <button class="btn-sm" onclick="toggleGymDone(${g.id})">✓ ${g.done?'Desmarcar':'Completar'}</button>
+        <button class="btn-sm" onclick="editItem('gimnasia',${g.id})">✎ Editar</button>
+        <button class="btn-sm d" onclick="delItem('gimnasia',${g.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function toggleGymDay(iso){
+  const ex=S.gimnasia.find(g=>g.date===iso);
+  if(ex) ex.done=!ex.done; else S.gimnasia.push({id:Date.now(),title:'Entreno',date:iso,done:true,duration:'—',desc:''});
+  save(); renderGimnasia();
+}
+function toggleGymDone(id){ const g=S.gimnasia.find(x=>x.id===id); if(g){g.done=!g.done;save();renderGimnasia();} }
+
+// ══════════════════════════════════════════════════════════════
+// RENDER OBJETIVOS
+// ══════════════════════════════════════════════════════════════
+function renderObjetivos(){
+  const c=document.getElementById('list-objetivos');
+  if(!S.objetivos.length){c.innerHTML=empty('🎯','Sin objetivos.');return;}
+  c.innerHTML=S.objetivos.map(o=>`
+    <div class="goal-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div><div class="card-title">${esc(o.title)}</div><div class="card-meta">🏁 ${fmtDate(o.deadline)}</div></div>
+        <span style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--ao)">${o.progress}%</span>
+      </div>
+      ${o.desc?`<div class="card-desc" style="margin-bottom:10px">${esc(o.desc)}</div>`:''}
+      <div class="prog-bar"><div class="prog-fill" style="width:${o.progress}%"></div></div>
+      <div class="card-actions" style="margin-top:12px">
+        <button class="btn-sm" onclick="updProg(${o.id},-10)">− 10%</button>
+        <button class="btn-sm" onclick="updProg(${o.id},10)">+ 10%</button>
+        <button class="btn-sm" onclick="editItem('objetivos',${o.id})">✎ Editar</button>
+        <button class="btn-sm d" onclick="delItem('objetivos',${o.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+function updProg(id,d){ const o=S.objetivos.find(x=>x.id===id); if(o){o.progress=Math.max(0,Math.min(100,o.progress+d));save();renderObjetivos();} }
+
+// ══════════════════════════════════════════════════════════════
+// MODAL TEMPLATES
+// ══════════════════════════════════════════════════════════════
+let mCourses=[], mItems=[], mSection=null, mEditId=null;
+
+const MFIELDS = {
+  cita:`
+    <div class="fg"><label>Título de la cita</label><input id="f_title" placeholder="Ej: Revisión médica"></div>
+    <div class="frow">
+      <div class="fg"><label>Fecha</label><input id="f_date" type="date"></div>
+      <div class="fg"><label>Hora</label><input id="f_time" type="time" value="10:00"></div>
+    </div>
+    <div class="fg"><label>Aviso anticipado</label>
+      <select id="f_notif"><option value="15">15 min antes</option><option value="30" selected>30 min antes</option><option value="60">1 hora antes</option><option value="120">2 horas antes</option><option value="1440">1 día antes</option></select>
+    </div>
+    <div class="fg"><label>Notas</label><textarea id="f_desc" rows="2" placeholder="Lugar, detalles…"></textarea></div>`,
+
+  evento:`
+    <div class="fg"><label>Nombre del evento</label><input id="f_title" placeholder="Ej: Feria gastronómica"></div>
+    <div class="frow">
+      <div class="fg"><label>Fecha</label><input id="f_date" type="date"></div>
+      <div class="fg"><label>Hora</label><input id="f_time" type="time" value="10:00"></div>
+    </div>
+    <div class="fg"><label>Aviso anticipado</label>
+      <select id="f_notif"><option value="60">1 hora antes</option><option value="1440" selected>1 día antes</option><option value="4320">3 días antes</option></select>
+    </div>
+    <div class="fg"><label>Descripción</label><textarea id="f_desc" rows="2" placeholder="Lugar, stand, detalles…"></textarea></div>`,
+
+  cumple:`
+    <div class="fg"><label>Nombre</label><input id="f_client" placeholder="Nombre completo"></div>
+    <div class="frow">
+      <div class="fg"><label>Mes</label>
+        <select id="f_month"><option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option><option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option><option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select>
+      </div>
+      <div class="fg"><label>Día</label><input id="f_day" type="number" min="1" max="31" placeholder="15"></div>
+    </div>`,
+
+  trabajo:`
+    <div class="fg"><label>Tarea</label><input id="f_title" placeholder="Nombre de la tarea"></div>
+    <div class="frow">
+      <div class="fg"><label>Fecha</label><input id="f_date" type="date"></div>
+      <div class="fg"><label>Estado</label><select id="f_status"><option value="pending">Pendiente</option><option value="progress">En curso</option><option value="done">Completado</option><option value="urgent">Urgente</option></select></div>
+    </div>
+    <div class="fg"><label>Descripción</label><textarea id="f_desc" rows="2" placeholder="Detalles…"></textarea></div>`,
+
+  reservas:`
+    <div class="fsec">Datos de la reserva</div>
+    <div class="fg"><label>Cliente / Nombre</label><input id="f_client" placeholder="Nombre del cliente"></div>
+    <div class="frow">
+      <div class="fg"><label>Nº Mesa</label><input id="f_table" type="number" min="1" placeholder="4"></div>
+      <div class="fg"><label>Comensales</label><input id="f_pax" type="number" min="1" placeholder="4"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Fecha</label><input id="f_date" type="date"></div>
+      <div class="fg"><label>Hora</label><input id="f_time" type="time" value="14:00"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Estado</label><select id="f_status"><option value="pending">Pendiente</option><option value="confirmed">Confirmada</option><option value="cancelled">Cancelada</option></select></div>
+      <div class="fg"><label>Teléfono</label><input id="f_phone" placeholder="6xx xxx xxx"></div>
+    </div>
+    <div class="fg"><label>Notas / Alergias</label><textarea id="f_notes" rows="2" placeholder="Alergias, peticiones…"></textarea></div>
+    <div class="fsec">Menú asignado</div>
+    <div class="fg"><label>Nombre del menú</label><input id="f_menuName" placeholder="Ej: Menú Degustación Primavera"></div>
+    <div id="mCoursesList"></div>
+    <button type="button" onclick="addMCourse()" style="margin-top:7px;padding:6px 14px;border-radius:8px;border:1px dashed #6c8fff55;background:transparent;color:var(--aw);font-family:'DM Sans',sans-serif;font-size:.81rem;cursor:pointer;width:100%">+ Añadir plato</button>`,
+
+  pedidos:`
+    <div class="fg"><label>Proveedor</label><input id="f_title" placeholder="Nombre del proveedor"></div>
+    <div class="frow">
+      <div class="fg"><label>Fecha pedido</label><input id="f_date" type="date"></div>
+      <div class="fg"><label>Estado</label><select id="f_status"><option value="pending">Enviado</option><option value="partial">Parcial</option><option value="received">Recibido</option></select></div>
+    </div>
+    <div class="fg"><label>Notas</label><textarea id="f_notes" rows="2" placeholder="Observaciones…"></textarea></div>
+    <div class="fsec">Artículos del pedido</div>
+    <div id="mItemsList"></div>
+    <button type="button" onclick="addMItem()" style="margin-top:7px;padding:6px 14px;border-radius:8px;border:1px dashed #6c8fff55;background:transparent;color:var(--aw);font-family:'DM Sans',sans-serif;font-size:.81rem;cursor:pointer;width:100%">+ Añadir artículo</button>`,
+
+  finanzas:`
+    <div class="fg"><label>Concepto</label><input id="f_title" placeholder="Nombre del movimiento"></div>
+    <div class="frow">
+      <div class="fg"><label>Importe (€)</label><input id="f_amount" type="number" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="fg"><label>Tipo</label><select id="f_type"><option value="cobro">Cobro</option><option value="pago">Pago</option></select></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Fecha</label><input id="f_date" type="date"></div>
+      <div class="fg"><label>Estado</label><select id="f_status"><option value="pending">Pendiente</option><option value="done">Completado</option></select></div>
+    </div>
+    <div class="fg"><label>Notas</label><textarea id="f_desc" rows="2" placeholder="Descripción…"></textarea></div>`,
+
+  pasatiempo:`
+    <div class="fg"><label>Actividad</label><input id="f_title" placeholder="Nombre del pasatiempo"></div>
+    <div class="frow">
+      <div class="fg"><label>Fecha</label><input id="f_date" type="date"></div>
+      <div class="fg"><label>Estado</label><select id="f_status"><option value="pending">Pendiente</option><option value="progress">En curso</option><option value="done">Completado</option></select></div>
+    </div>
+    <div class="fg"><label>Descripción</label><textarea id="f_desc" rows="2" placeholder="Detalle…"></textarea></div>`,
+
+  gimnasia:`
+    <div class="fg"><label>Entrenamiento</label><input id="f_title" placeholder="Nombre del entreno"></div>
+    <div class="frow">
+      <div class="fg"><label>Fecha</label><input id="f_date" type="date"></div>
+      <div class="fg"><label>Duración</label><input id="f_duration" placeholder="45 min"></div>
+    </div>
+    <div class="fg"><label>Ejercicios</label><textarea id="f_desc" rows="2" placeholder="Ejercicios planificados…"></textarea></div>`,
+
+  objetivos:`
+    <div class="fg"><label>Objetivo</label><input id="f_title" placeholder="¿Qué quieres lograr?"></div>
+    <div class="frow">
+      <div class="fg"><label>Fecha límite</label><input id="f_deadline" type="date"></div>
+      <div class="fg"><label>Progreso (%)</label><input id="f_progress" type="number" min="0" max="100" value="0"></div>
+    </div>
+    <div class="fg"><label>Descripción</label><textarea id="f_desc" rows="2" placeholder="Cómo lo conseguirás…"></textarea></div>`
+};
+
+const MNAMES2={cita:'Cita',evento:'Evento',cumple:'Cumpleaños',trabajo:'Tarea',reservas:'Reserva',pedidos:'Pedido',finanzas:'Movimiento',pasatiempo:'Actividad',gimnasia:'Entreno',objetivos:'Objetivo'};
+const MCOLORS={cita:'var(--ac)',evento:'var(--ao)',cumple:'#f4553a',trabajo:'var(--aw)',reservas:'var(--aw)',pedidos:'var(--aw)',finanzas:'var(--af)',pasatiempo:'var(--ah)',gimnasia:'var(--ag)',objetivos:'var(--ao)'};
+
+function openModal(section, id=null){
+  mSection=section; mEditId=id; mCourses=[]; mItems=[];
+  document.getElementById('mFields').innerHTML = MFIELDS[section]||'';
+  document.getElementById('mAccent').textContent = MNAMES2[section]||section;
+  document.getElementById('mAccent').style.color = MCOLORS[section]||'var(--aw)';
+  document.getElementById('mSave').style.background = MCOLORS[section]||'var(--aw)';
+  document.getElementById('mTitle').firstChild.textContent = id?'Editar ':'Añadir ';
+  const td=new Date().toISOString().split('T')[0];
+  const df=document.getElementById('f_date')||document.getElementById('f_deadline');
+  if(df) df.value=td;
+
+  if(id){
+    const arr = ['cita','evento'].includes(section)?S[section+'s']:
+                section==='cumple'?S.cumples:
+                section==='reservas'?S.reservas:
+                section==='pedidos'?S.pedidos:S[section];
+    const item = arr?.find(x=>x.id===id);
+    if(item){
+      const g=n=>document.getElementById(n);
+      if(g('f_title')) g('f_title').value=item.title||'';
+      if(g('f_client')) g('f_client').value=item.client||item.name||'';
+      if(g('f_date')) g('f_date').value=item.date||td;
+      if(g('f_time')) g('f_time').value=item.time||'10:00';
+      if(g('f_notif')) g('f_notif').value=item.notif||30;
+      if(g('f_status')) g('f_status').value=item.status||'pending';
+      if(g('f_desc')) g('f_desc').value=item.desc||'';
+      if(g('f_notes')) g('f_notes').value=item.notes||'';
+      if(g('f_amount')) g('f_amount').value=item.amount||'';
+      if(g('f_type')) g('f_type').value=item.type||'cobro';
+      if(g('f_duration')) g('f_duration').value=item.duration||'';
+      if(g('f_deadline')) g('f_deadline').value=item.deadline||td;
+      if(g('f_progress')) g('f_progress').value=item.progress||0;
+      if(g('f_table')) g('f_table').value=item.table||'';
+      if(g('f_pax')) g('f_pax').value=item.pax||'';
+      if(g('f_phone')) g('f_phone').value=item.phone||'';
+      if(g('f_menuName')) g('f_menuName').value=item.menuName||'';
+      if(g('f_month')&&item.date) g('f_month').value=item.date.split('-')[0];
+      if(g('f_day')&&item.date) g('f_day').value=parseInt(item.date.split('-')[1])||'';
+      if(item.menu){ mCourses=[...item.menu]; renderMCourses(); }
+      if(item.items){ mItems=[...item.items]; renderMItems(); }
+    }
+  }
+  document.getElementById('MO').classList.add('open');
+}
+
+function addMCourse(){ mCourses.push({course:'',dish:''}); renderMCourses(); }
+function removeMCourse(i){ mCourses.splice(i,1); renderMCourses(); }
+function renderMCourses(){
+  const c=document.getElementById('mCoursesList'); if(!c)return;
+  c.innerHTML=mCourses.map((mc,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 2fr auto;gap:7px;margin-bottom:7px;align-items:center">
+      <input placeholder="Tipo plato" value="${esc(mc.course)}" oninput="mCourses[${i}].course=this.value" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none">
+      <input placeholder="Nombre del plato" value="${esc(mc.dish)}" oninput="mCourses[${i}].dish=this.value" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none">
+      <button onclick="removeMCourse(${i})" style="padding:6px 9px;border-radius:7px;border:1px solid var(--ag)44;background:transparent;color:var(--ag);cursor:pointer;font-size:.78rem">✕</button>
+    </div>`).join('');
+}
+
+function addMItem(){ mItems.push({name:'',qty:'',price:0}); renderMItems(); }
+function removeMItem(i){ mItems.splice(i,1); renderMItems(); }
+function renderMItems(){
+  const c=document.getElementById('mItemsList'); if(!c)return;
+  c.innerHTML=mItems.map((mi,i)=>`
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:7px;margin-bottom:7px;align-items:center">
+      <input placeholder="Producto" value="${esc(mi.name)}" oninput="mItems[${i}].name=this.value" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none">
+      <input placeholder="Cant." value="${esc(mi.qty||'')}" oninput="mItems[${i}].qty=this.value" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none">
+      <input placeholder="€" type="number" value="${mi.price||''}" oninput="mItems[${i}].price=parseFloat(this.value)||0" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none">
+      <button onclick="removeMItem(${i})" style="padding:6px 9px;border-radius:7px;border:1px solid var(--ag)44;background:transparent;color:var(--ag);cursor:pointer;font-size:.78rem">✕</button>
+    </div>`).join('');
+}
+
+function closeModal(){ document.getElementById('MO').classList.remove('open'); mSection=null; mEditId=null; mCourses=[]; mItems=[]; }
+
+function saveItem(){
+  const s=mSection;
+  const g=n=>{const el=document.getElementById(n);return el?el.value.trim():null;};
+
+  if(s==='cita'||s==='evento'){
+    const title=g('f_title'); if(!title){alert('El título es obligatorio.');return;}
+    const arr=s==='cita'?S.citas:S.eventos;
+    const item={id:mEditId||Date.now(),title,date:g('f_date')||TISO,time:g('f_time')||'10:00',notif:parseInt(g('f_notif'))||30,desc:g('f_desc')||'',color:s};
+    if(mEditId){const idx=arr.findIndex(x=>x.id===mEditId);if(idx!==-1)arr[idx]=item;}
+    else arr.push(item);
+    save(); closeModal(); renderCalendar();
+    if(notifEnabled) scheduleAllNotifications();
+    showToast(`✅ ${MNAMES2[s]} guardada. Notificación programada.`);
+    return;
+  }
+
+  if(s==='cumple'){
+    const name=g('f_client'); if(!name){alert('El nombre es obligatorio.');return;}
+    const mon=g('f_month')||'01'; const day=String(parseInt(g('f_day'))||1).padStart(2,'0');
+    const item={id:mEditId||Date.now(),name,date:`${mon}-${day}`,emoji:'🎂'};
+    if(mEditId){const idx=S.cumples.findIndex(x=>x.id===mEditId);if(idx!==-1)S.cumples[idx]=item;}
+    else S.cumples.push(item);
+    save(); closeModal(); renderBirthdays(); renderCalendar(); return;
+  }
+
+  if(s==='reservas'){
+    const client=g('f_client'); if(!client){alert('El cliente es obligatorio.');return;}
+    const item={id:mEditId||Date.now(),client,table:parseInt(g('f_table'))||1,pax:parseInt(g('f_pax'))||1,date:g('f_date')||TISO,time:g('f_time')||'14:00',status:g('f_status')||'pending',phone:g('f_phone')||'',notes:g('f_notes')||'',menuName:g('f_menuName')||'',menu:mCourses.filter(c=>c.course||c.dish)};
+    if(mEditId){const idx=S.reservas.findIndex(x=>x.id===mEditId);if(idx!==-1)S.reservas[idx]=item;}
+    else S.reservas.push(item);
+    save(); closeModal(); renderReservas(); renderCalendar(); return;
+  }
+
+  if(s==='pedidos'){
+    const title=g('f_title'); if(!title){alert('El proveedor es obligatorio.');return;}
+    const item={id:mEditId||Date.now(),supplier:title,date:g('f_date')||TISO,status:g('f_status')||'pending',notes:g('f_notes')||'',items:mItems.filter(i=>i.name)};
+    if(mEditId){const idx=S.pedidos.findIndex(x=>x.id===mEditId);if(idx!==-1)S.pedidos[idx]=item;}
+    else S.pedidos.push(item);
+    save(); closeModal(); renderPedidos(); return;
+  }
+
+  const title=g('f_title'); if(!title){alert('El título es obligatorio.');return;}
+  const arr=S[s];
+  const item={id:mEditId||Date.now(),title};
+  if(g('f_date')!==null) item.date=g('f_date');
+  if(g('f_deadline')!==null) item.deadline=g('f_deadline');
+  if(g('f_status')!==null) item.status=g('f_status')||'pending';
+  if(g('f_desc')!==null) item.desc=g('f_desc');
+  if(g('f_amount')!==null) item.amount=parseFloat(g('f_amount'))||0;
+  if(g('f_type')!==null) item.type=g('f_type')||'cobro';
+  if(g('f_duration')!==null) item.duration=g('f_duration')||'—';
+  if(g('f_progress')!==null) item.progress=parseInt(g('f_progress'))||0;
+  if(s==='gimnasia') item.done=false;
+  if(mEditId){const idx=arr.findIndex(x=>x.id===mEditId);if(idx!==-1)arr[idx]=item;}
+  else arr.push(item);
+  save(); closeModal(); render(curTab);
+}
+
+function editItem(section,id){ mSection=section; openModal(section,id); }
+
+function delItem(section,id){
+  if(!confirm('¿Eliminar este elemento?')) return;
+  if(section==='reservas') S.reservas=S.reservas.filter(x=>x.id!==id);
+  else if(section==='pedidos') S.pedidos=S.pedidos.filter(x=>x.id!==id);
+  else S[section]=S[section].filter(x=>x.id!==id);
+  save();
+  if(section==='reservas') renderReservas();
+  else if(section==='pedidos') renderPedidos();
+  else render(curTab);
+  renderCalendar();
+}
+
+function toggleSt(tab,id){
+  const item=S[tab].find(x=>x.id===id); if(!item)return;
+  const cy={pending:'progress',progress:'done',done:'pending',urgent:'pending'};
+  item.status=cy[item.status]||'pending'; save(); render(curTab);
+}
+
+document.getElementById('MO').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+renderCalendar();
+</script>
+</body>
+</html>
