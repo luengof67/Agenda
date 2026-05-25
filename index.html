@@ -121,6 +121,8 @@ main{flex:1;padding:26px 32px;}
 .b-partial{background:#2a2518;color:#f4a553;}
 .btn-sm{padding:5px 12px;border-radius:7px;font-size:.76rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--soft);transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
 .btn-sm:hover{background:var(--aw);color:#fff;border-color:var(--aw);}
+.btn-wa{color:#25D366!important;border-color:#25D36666!important;}
+.btn-wa:hover{background:#25D366!important;color:#fff!important;border-color:#25D366!important;}
 .btn-sm.d:hover{background:var(--ag);color:#fff;border-color:var(--ag);}
 .btn-sm.g:hover{background:var(--af);color:#fff;border-color:var(--af);}
 
@@ -168,6 +170,33 @@ main{flex:1;padding:26px 32px;}
 .ftabs{display:flex;gap:7px;margin-bottom:18px;}
 .ftab{padding:7px 18px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;}
 .ftab.active,.ftab:hover{background:var(--af);color:#fff;border-color:var(--af);}
+
+/* ── SAVINGS ── */
+.ahorro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s;}
+.ahorro-card:hover{border-color:var(--af);}
+.ahorro-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.ahorro-saved{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;}
+.ahorro-target{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.ahorro-bar{height:8px;background:var(--surface2);border-radius:50px;overflow:hidden;margin:12px 0 5px;}
+.ahorro-fill{height:100%;border-radius:50px;transition:width .6s ease;}
+.ahorro-pct{font-size:.74rem;color:var(--muted);display:flex;justify-content:space-between;}
+.fin-stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+@media(max-width:640px){.fin-stats4{grid-template-columns:1fr 1fr;}}
+
+/* ── CAL EVENT CARDS ── */
+.cev-card{border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;transition:border-color .2s;}
+.cev-card:hover{border-color:var(--ac);}
+.cev-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none;}
+.cev-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.cev-info{flex:1;}
+.cev-title{font-size:.9rem;font-weight:600;}
+.cev-sub{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.cev-arrow{font-size:.76rem;color:var(--muted);transition:transform .2s;flex-shrink:0;}
+.cev-card.open .cev-arrow{transform:rotate(180deg);}
+.cev-body{display:none;padding:4px 14px 14px 32px;border-top:1px solid var(--border);}
+.cev-card.open .cev-body{display:block;animation:fadeIn .2s ease;}
+.cev-row{display:flex;gap:8px;margin-top:9px;font-size:.83rem;color:var(--soft);align-items:flex-start;}
+.cev-lbl{font-size:.71rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;min-width:52px;padding-top:2px;flex-shrink:0;}
 
 /* ── GYM ── */
 .gym-week{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:24px;}
@@ -230,14 +259,143 @@ main{flex:1;padding:26px 32px;}
   .cal-grid{gap:1px;}
   .cal-day{min-height:52px;padding:4px;}
 }
+
+/* ── PRINT SERVICE SHEET ── */
+@media print {
+  header, .tabs-bar, .subtabs, .ph .btn-add, #notif-btn,
+  .card-actions, .cal-nav-btns, .fbar, .res-stats,
+  .btn-add, #print-hide { display:none!important; }
+  body { background:#fff!important; color:#000!important; }
+  .print-sheet { display:block!important; }
+  .ps-card { break-inside:avoid; border:1px solid #ccc!important; }
+}
+.print-sheet { display:none; }
+
+/* ── WEEKLY SUMMARY ── */
+.week-summary { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:20px; }
+.ws-day { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 7px; min-height:100px; }
+.ws-day.today { border-color:var(--ac); }
+.ws-day-hd { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+.ws-day-num { font-size:1.1rem; font-weight:700; margin:3px 0 8px; }
+.ws-day.today .ws-day-num { color:var(--ac); }
+.ws-event { font-size:.72rem; border-radius:4px; padding:2px 5px; margin-bottom:3px; line-height:1.4; }
+
+/* ── ESCANDALLO ── */
+.esc-table { width:100%; border-collapse:collapse; margin-top:14px; }
+.esc-table th { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; padding:7px 10px; border-bottom:1px solid var(--border); text-align:left; }
+.esc-table td { padding:8px 10px; border-bottom:1px solid var(--border)22; font-size:.85rem; }
+.esc-table tr:last-child td { border-bottom:none; }
+.esc-total-row { background:var(--surface2); font-weight:700; }
+.esc-result { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px; }
+.esc-res-box { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center; }
+.esc-res-val { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; }
+.esc-res-lbl { font-size:.72rem; color:var(--muted); margin-top:3px; text-transform:uppercase; letter-spacing:.5px; }
+.esc-ing-row { display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:7px; margin-bottom:7px; align-items:center; }
+.esc-ing-row input { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:7px 9px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:.83rem; outline:none; width:100%; }
+.esc-ing-row input:focus { border-color:var(--aw); }
+
+/* ── LIGHT MODE ── */
+body.light{
+  --bg:#f4f3f8;--surface:#ffffff;--surface2:#f0eef8;--border:#dddae8;
+  --text:#1a1825;--muted:#8884a0;--soft:#55526a;
+}
+body.light .logo span{color:var(--aw);}
+body.light .cal-day{background:#fff;}
+body.light .card,body.light .res-card,body.light .goal-card,body.light .ahorro-card,body.light .order-card{background:#fff;}
+body.light .bday-card{background:#fff;}
+body.light .cev-card{background:#fff;}
+
+/* ── THEME TOGGLE ── */
+#theme-btn{background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:7px 14px;font-size:0.8rem;color:var(--muted);cursor:pointer;transition:all .2s;}
+#theme-btn:hover{color:var(--text);}
+
+/* ── SEARCH OVERLAY ── */
+#search-btn{background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:7px 14px;font-size:0.8rem;color:var(--muted);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+#search-btn:hover{color:var(--text);border-color:var(--aw);}
+.search-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;align-items:flex-start;justify-content:center;padding-top:80px;backdrop-filter:blur(6px);}
+.search-overlay.open{display:flex;}
+.search-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:620px;overflow:hidden;animation:fadeIn .2s ease;}
+.search-input-wrap{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);}
+.search-input-wrap span{font-size:1.1rem;color:var(--muted);}
+#global-search-input{flex:1;background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text);}
+#global-search-input::placeholder{color:var(--muted);}
+.search-results{max-height:420px;overflow-y:auto;padding:8px 0;}
+.search-results::-webkit-scrollbar{width:3px;}
+.search-results::-webkit-scrollbar-thumb{background:var(--border);}
+.search-result-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;transition:background .15s;}
+.search-result-item:hover{background:var(--surface2);}
+.sr-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.sr-title{font-size:.9rem;font-weight:600;}
+.sr-meta{font-size:.75rem;color:var(--muted);margin-top:1px;}
+.sr-badge{font-size:.7rem;padding:2px 8px;border-radius:50px;margin-left:auto;flex-shrink:0;}
+.search-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:.88rem;}
+.search-hint{display:flex;gap:16px;padding:10px 20px;border-top:1px solid var(--border);font-size:.74rem;color:var(--muted);}
+.search-hint kbd{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 7px;font-family:'DM Sans',sans-serif;}
+
+/* ── DRAG & DROP ── */
+.draggable{cursor:grab;}
+.draggable:active{cursor:grabbing;}
+.drag-over{opacity:.5;border-style:dashed!important;}
+.drag-handle{color:var(--muted);cursor:grab;font-size:.9rem;margin-right:4px;user-select:none;}
+.drag-handle:hover{color:var(--soft);}
+
+/* ── PDF EXPORT ── */
+#pdf-fab{position:fixed;bottom:24px;right:24px;background:var(--ao);color:#fff;border:none;border-radius:50px;padding:12px 20px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px #0006;transition:all .2s;z-index:50;}
+#pdf-fab:hover{transform:scale(1.05);opacity:.9;}
+
+/* ── GLUCOSA ── */
+.gluc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.gluc-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.gluc-stat-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;}
+.gluc-stat-lbl{font-size:.7rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+.gluc-range-bar{height:10px;border-radius:50px;background:linear-gradient(to right,#e05a7a 0%,#f4a553 20%,#4ecb71 40%,#4ecb71 70%,#f4a553 85%,#e05a7a 100%);margin:16px 0 6px;position:relative;}
+.gluc-range-labels{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:18px;}
+.gluc-table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--r);overflow:hidden;border:1px solid var(--border);}
+.gluc-table th{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2);}
+.gluc-table td{padding:10px 14px;border-bottom:1px solid var(--border)22;font-size:.85rem;vertical-align:middle;}
+.gluc-table tr:last-child td{border-bottom:none;}
+.gluc-table tr:hover td{background:var(--surface2);}
+.gluc-val{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;}
+.gluc-low{color:#e05a7a;}
+.gluc-high{color:#f4a553;}
+.gluc-ok{color:#4ecb71;}
+.gluc-alert{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:50px;font-size:.7rem;font-weight:700;}
+.gluc-alert.low{background:#28111a;color:#e05a7a;}
+.gluc-alert.ok{background:#152018;color:#4ecb71;}
+.gluc-alert.high{background:#2a1f10;color:#f4a553;}
+.gluc-alert.very-high{background:#281520;color:#e05a7a;}
+.gluc-momento{font-size:.75rem;color:var(--soft);}
+.gluc-med{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.gluc-date-nav{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.gluc-date-nav input{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;}
+.gluc-date-nav input:focus{border-color:var(--ag);}
+.gluc-date-nav button{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--soft);font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;}
+.gluc-date-nav button:hover{border-color:var(--ag);color:var(--ag);}
+.gluc-empty{text-align:center;padding:40px;color:var(--muted);font-size:.88rem;}
+@media(max-width:640px){.gluc-stats{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay" onclick="if(event.target===this)closeSearch()">
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <span>🔍</span>
+      <input id="global-search-input" placeholder="Buscar en toda la agenda…" oninput="globalSearch(this.value)" autocomplete="off">
+      <button onclick="closeSearch()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem">✕</button>
+    </div>
+    <div class="search-results" id="search-results"><div class="search-empty">Empieza a escribir para buscar…</div></div>
+    <div class="search-hint"><span><kbd>Esc</kbd> cerrar</span><span><kbd>↵</kbd> ir a sección</span></div>
+  </div>
+</div>
+
 <header>
   <div class="logo">Mi <span>Agenda</span></div>
   <div class="header-right">
+    <button id="search-btn" onclick="openSearch()">🔍 Buscar</button>
     <div class="date-badge" id="currentDate"></div>
+    <button id="theme-btn" onclick="toggleTheme()">☀️ Claro</button>
     <button id="notif-btn" onclick="toggleNotifications()">🔔 Notificaciones</button>
   </div>
 </header>
@@ -249,6 +407,7 @@ main{flex:1;padding:26px 32px;}
   <button class="tab-btn" data-tab="pasatiempo" onclick="switchTab('pasatiempo',this)"><span>🎨</span> Pasatiempos</button>
   <button class="tab-btn" data-tab="gimnasia" onclick="switchTab('gimnasia',this)"><span>🏋️</span> Gimnasia</button>
   <button class="tab-btn" data-tab="objetivos" onclick="switchTab('objetivos',this)"><span>🎯</span> Objetivos</button>
+  <button class="tab-btn" data-tab="glucosa" onclick="switchTab('glucosa',this)"><span>🩸</span> Glucosa</button>
 </div>
 
 <main>
@@ -260,12 +419,14 @@ main{flex:1;padding:26px 32px;}
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn-add" onclick="openModal('cita')" style="background:var(--ac)">+ Cita</button>
       <button class="btn-add" onclick="openModal('evento')" style="background:var(--ao)">+ Evento</button>
+      <button class="btn-add" onclick="exportICS()" style="background:#555;gap:6px">📅 Exportar .ics</button>
     </div>
   </div>
 
   <!-- Sub-tabs: Mes / Cumpleaños -->
   <div class="subtabs">
     <button class="stab active" style="--sc:var(--ac)" onclick="switchCalTab('mes',this)">🗓 Vista mensual</button>
+    <button class="stab" onclick="switchCalTab('semana',this)">📆 Esta semana</button>
     <button class="stab" onclick="switchCalTab('cumple',this)">🎂 Cumpleaños</button>
   </div>
 
@@ -299,6 +460,12 @@ main{flex:1;padding:26px 32px;}
     </div>
   </div>
 
+  <!-- Resumen semanal -->
+  <div class="subpanel" id="sub-semana">
+    <div class="week-summary" id="week-summary-grid"></div>
+    <div id="week-summary-detail"></div>
+  </div>
+
   <!-- Cumpleaños -->
   <div class="subpanel" id="sub-cumple">
     <div class="bday-import">
@@ -325,6 +492,8 @@ main{flex:1;padding:26px 32px;}
     <button class="stab active" onclick="switchWorkTab('tareas',this)">📋 Tareas</button>
     <button class="stab" onclick="switchWorkTab('reservas',this)">🍽️ Reservas</button>
     <button class="stab" onclick="switchWorkTab('pedidos',this)">📦 Pedidos</button>
+    <button class="stab" onclick="switchWorkTab('escandallo',this)">🧮 Escandallo</button>
+    <button class="stab" onclick="switchWorkTab('impresion',this)">🖨️ Hoja servicio</button>
   </div>
   <div class="subpanel active" id="sub-tareas"><div class="grid" id="list-trabajo"></div></div>
   <div class="subpanel" id="sub-reservas">
@@ -353,25 +522,88 @@ main{flex:1;padding:26px 32px;}
     </div>
     <div class="grid" id="list-pedidos"></div>
   </div>
+
+  <!-- ESCANDALLO -->
+  <div class="subpanel" id="sub-escandallo">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700">Escandallo de plato</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:3px">Calcula el coste y margen de cualquier receta</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-add" onclick="escAddRow()" style="background:var(--aw)">+ Ingrediente</button>
+        <button class="btn-add" onclick="escReset()" style="background:#444">✕ Limpiar</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="fg"><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Nombre del plato</label>
+        <input id="esc-name" placeholder="Ej: Carrillera ibérica estofada" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none"></div>
+      <div class="fg"><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Raciones</label>
+        <input id="esc-raciones" type="number" min="1" value="4" oninput="escCalc()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none"></div>
+    </div>
+    <div id="esc-rows"></div>
+    <div style="margin-top:12px;padding:12px;background:var(--surface2);border-radius:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="fg"><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">% Mano de obra</label>
+          <input id="esc-mdo" type="number" min="0" max="100" value="30" oninput="escCalc()" placeholder="30" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none"></div>
+        <div class="fg"><label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Precio de venta (€)</label>
+          <input id="esc-pvp" type="number" min="0" step="0.01" value="18" oninput="escCalc()" placeholder="18.00" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none"></div>
+      </div>
+    </div>
+    <div class="esc-result" id="esc-result"></div>
+    <div id="esc-saved-list" style="margin-top:20px"></div>
+  </div>
+
+  <!-- HOJA DE SERVICIO -->
+  <div class="subpanel" id="sub-impresion">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700">Hoja de servicio del día</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:3px">Vista limpia para imprimir o compartir con el equipo</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <input type="date" id="print-date" style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none" onchange="renderPrintSheet()">
+        <button class="btn-add" onclick="window.print()" style="background:#555">🖨️ Imprimir</button>
+      </div>
+    </div>
+    <div id="print-sheet-preview"></div>
+  </div>
 </div>
 
 <!-- ═══ FINANZAS ═══ -->
 <div id="panel-finanzas" class="panel">
   <div class="ph">
     <div class="pt">Finanzas <em style="color:var(--af)">Personales</em></div>
-    <button class="btn-add" onclick="openModal('finanzas')" style="background:var(--af)">+ Añadir</button>
+    <button class="btn-add" id="fin-add-btn" onclick="onFinAdd()" style="background:var(--af)">+ Añadir</button>
   </div>
-  <div class="fin-stats">
-    <div class="fsc"><div class="fsc-lbl">Cobros</div><div class="fsc-val pos" id="st-cobros">€0</div></div>
-    <div class="fsc"><div class="fsc-lbl">Pagos</div><div class="fsc-val neg" id="st-pagos">€0</div></div>
-    <div class="fsc"><div class="fsc-lbl">Balance</div><div class="fsc-val neu" id="st-bal">€0</div></div>
+  <div class="subtabs">
+    <button class="stab active" onclick="switchFinTab('movimientos',this)">💶 Movimientos</button>
+    <button class="stab" onclick="switchFinTab('ahorros',this)">🏦 Ahorros</button>
   </div>
-  <div class="ftabs">
-    <button class="ftab active" onclick="filterFin('todo',this)">Todo</button>
-    <button class="ftab" onclick="filterFin('cobro',this)">Cobros</button>
-    <button class="ftab" onclick="filterFin('pago',this)">Pagos</button>
+  <!-- Movimientos -->
+  <div class="subpanel active" id="sub-movimientos">
+    <div class="fin-stats">
+      <div class="fsc"><div class="fsc-lbl">Cobros</div><div class="fsc-val pos" id="st-cobros">€0</div></div>
+      <div class="fsc"><div class="fsc-lbl">Pagos</div><div class="fsc-val neg" id="st-pagos">€0</div></div>
+      <div class="fsc"><div class="fsc-lbl">Balance</div><div class="fsc-val neu" id="st-bal">€0</div></div>
+    </div>
+    <div class="ftabs">
+      <button class="ftab active" onclick="filterFin('todo',this)">Todo</button>
+      <button class="ftab" onclick="filterFin('cobro',this)">Cobros</button>
+      <button class="ftab" onclick="filterFin('pago',this)">Pagos</button>
+    </div>
+    <div class="grid" id="list-finanzas"></div>
   </div>
-  <div class="grid" id="list-finanzas"></div>
+  <!-- Ahorros -->
+  <div class="subpanel" id="sub-ahorros">
+    <div class="fin-stats4">
+      <div class="fsc"><div class="fsc-lbl">Objetivos</div><div class="fsc-val neu" id="st-ah-total">0</div></div>
+      <div class="fsc"><div class="fsc-lbl">Total ahorrado</div><div class="fsc-val pos" id="st-ah-saved">€0</div></div>
+      <div class="fsc"><div class="fsc-lbl">Total objetivo</div><div class="fsc-val neu" id="st-ah-target">€0</div></div>
+      <div class="fsc"><div class="fsc-lbl">Progreso global</div><div class="fsc-val pos" id="st-ah-pct">0%</div></div>
+    </div>
+    <div class="grid" id="list-ahorros"></div>
+  </div>
 </div>
 
 <!-- ═══ PASATIEMPOS ═══ -->
@@ -402,6 +634,50 @@ main{flex:1;padding:26px 32px;}
   <div id="list-objetivos"></div>
 </div>
 
+<!-- ═══ GLUCOSA ═══ -->
+<div id="panel-glucosa" class="panel">
+  <div class="ph">
+    <div class="pt">Glucosa <em style="color:var(--ag)">& Control</em></div>
+    <button class="btn-add" onclick="openModal('glucosa')" style="background:var(--ag)">+ Registrar toma</button>
+  </div>
+
+  <!-- Rango de referencia visual -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:20px">
+    <div style="font-size:.78rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Rangos de referencia (mg/dL)</div>
+    <div class="gluc-range-bar"></div>
+    <div class="gluc-range-labels">
+      <span>Hipoglucemia<br><b style="color:#e05a7a">&lt;70</b></span>
+      <span style="text-align:center">Normal ayunas<br><b style="color:#4ecb71">70–100</b></span>
+      <span style="text-align:center">Normal postprandial<br><b style="color:#4ecb71">70–140</b></span>
+      <span style="text-align:center">Elevada<br><b style="color:#f4a553">140–180</b></span>
+      <span style="text-align:right">Hiperglucemia<br><b style="color:#e05a7a">&gt;180</b></span>
+    </div>
+  </div>
+
+  <!-- Stats del día -->
+  <div class="gluc-stats">
+    <div class="gluc-stat"><div class="gluc-stat-val" id="gluc-media" style="color:var(--ag)">—</div><div class="gluc-stat-lbl">Media del día</div></div>
+    <div class="gluc-stat"><div class="gluc-stat-val" id="gluc-min" style="color:#4ecb71">—</div><div class="gluc-stat-lbl">Mínima</div></div>
+    <div class="gluc-stat"><div class="gluc-stat-val" id="gluc-max" style="color:#f4a553">—</div><div class="gluc-stat-lbl">Máxima</div></div>
+    <div class="gluc-stat"><div class="gluc-stat-val" id="gluc-tomas" style="color:var(--aw)">0</div><div class="gluc-stat-lbl">Tomas hoy</div></div>
+  </div>
+
+  <!-- Date navigator -->
+  <div class="gluc-date-nav">
+    <button onclick="glucPrevDay()">◀</button>
+    <input type="date" id="gluc-date" onchange="renderGlucosa()">
+    <button onclick="glucToday()">Hoy</button>
+    <button onclick="glucNextDay()">▶</button>
+    <span id="gluc-date-label" style="font-size:.85rem;color:var(--soft);margin-left:4px"></span>
+  </div>
+
+  <!-- Table -->
+  <div id="gluc-table-wrap"></div>
+
+  <!-- Weekly summary -->
+  <div id="gluc-week-wrap" style="margin-top:24px"></div>
+</div>
+
 </main>
 
 <!-- ═══ MODAL ═══ -->
@@ -422,7 +698,7 @@ main{flex:1;padding:26px 32px;}
 // ══════════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════════
-const KEY = 'agenda_v5';
+const KEY = 'agenda_v14';
 const TODAY = new Date();
 const TISO  = TODAY.toISOString().split('T')[0];
 
@@ -461,6 +737,11 @@ let S = JSON.parse(localStorage.getItem(KEY)||'null') || {
     {id:3,title:'Factura proveedor',amount:320,type:'pago',date:'2026-05-25',status:'done',desc:'Carnicería Hermanos Ruiz.'},
     {id:4,title:'Ingreso extra catering',amount:600,type:'cobro',date:'2026-05-24',status:'done',desc:'Evento corporativo 24/05.'}
   ],
+  ahorros:[
+    {id:1,title:'Fondo de emergencia',target:5000,saved:1800,date:'2026-12-31',desc:'3 meses de gastos cubiertos.',color:'#4ecb71'},
+    {id:2,title:'Vacaciones verano',target:1500,saved:600,date:'2026-07-01',desc:'Viaje familiar.',color:'#38c9c9'},
+    {id:3,title:'Nuevo equipamiento cocina',target:3000,saved:400,date:'2027-01-01',desc:'Horno de convección y batidora profesional.',color:'#b47cf7'}
+  ],
   pasatiempo:[
     {id:1,title:'Fotografía gastronómica',date:'2026-05-25',status:'progress',desc:'Sesión de platos nuevos para Instagram.'},
     {id:2,title:'Leer: "El Comensal"',date:'2026-06-10',status:'pending',desc:'Terminar los últimos 3 capítulos.'}
@@ -469,6 +750,16 @@ let S = JSON.parse(localStorage.getItem(KEY)||'null') || {
     {id:1,title:'Cardio + Core',date:'2026-05-24',done:true,duration:'45 min',desc:'Bici 20 min + plancha.'},
     {id:2,title:'Tren superior',date:'2026-05-26',done:false,duration:'60 min',desc:'Pecho, espalda, bíceps.'},
     {id:3,title:'Piernas',date:'2026-05-28',done:false,duration:'50 min',desc:'Sentadillas, prensa, femoral.'}
+  ],
+  glucosa:[
+    {id:1,date:'2026-05-25',time:'08:00',valor:92,momento:'Ayunas',medicacion:'Metformina 500mg',notas:''},
+    {id:2,date:'2026-05-25',time:'10:30',valor:138,momento:'2h post-desayuno',medicacion:'',notas:'Desayuno abundante'},
+    {id:3,date:'2026-05-25',time:'14:00',valor:105,momento:'Antes de comida',medicacion:'',notas:''},
+    {id:4,date:'2026-05-25',time:'16:30',valor:155,momento:'2h post-comida',medicacion:'',notas:'Paella'},
+    {id:5,date:'2026-05-25',time:'21:00',valor:118,momento:'Antes de cena',medicacion:'Metformina 500mg',notas:''},
+    {id:6,date:'2026-05-24',time:'08:00',valor:98,momento:'Ayunas',medicacion:'Metformina 500mg',notas:''},
+    {id:7,date:'2026-05-24',time:'14:00',valor:112,momento:'Antes de comida',medicacion:'',notas:''},
+    {id:8,date:'2026-05-24',time:'16:30',valor:162,momento:'2h post-comida',medicacion:'',notas:''}
   ],
   objetivos:[
     {id:1,title:'Abrir sección menús degustación',deadline:'2026-09-01',progress:30,desc:'Diseñar 3 menús temáticos estacionales.'},
@@ -558,6 +849,7 @@ function switchCalTab(sub, btn){
   btn.classList.add('active');
   document.getElementById('sub-'+sub).classList.add('active');
   if(sub==='mes') renderCalendar();
+  else if(sub==='semana') renderWeeklySummary();
   else renderBirthdays();
 }
 
@@ -568,13 +860,14 @@ function switchWorkTab(sub, btn){
   btn.classList.add('active');
   document.getElementById('sub-'+sub).classList.add('active');
   const addBtn = document.getElementById('trabajo-add-btn');
-  const labels = {tareas:'+ Nueva tarea', reservas:'+ Nueva reserva', pedidos:'+ Nuevo pedido'};
-  const modals = {tareas:'trabajo', reservas:'reservas', pedidos:'pedidos'};
-  addBtn.textContent = labels[sub];
-  addBtn.onclick = ()=>openModal(modals[sub]);
+  const labels = {tareas:'+ Nueva tarea', reservas:'+ Nueva reserva', pedidos:'+ Nuevo pedido', escandallo:'+ Guardar escandallo', impresion:'🖨️ Imprimir'};
+  addBtn.textContent = labels[sub]||'+ Añadir';
+  addBtn.onclick = sub==='escandallo'?escSave : sub==='impresion'?()=>window.print() : ()=>openModal({tareas:'trabajo',reservas:'reservas',pedidos:'pedidos'}[sub]||'trabajo');
   if(sub==='tareas') renderTrabajo();
-  else if(sub==='reservas') renderReservas();
-  else renderPedidos();
+  else if(sub==='reservas'){ renderReservas(); }
+  else if(sub==='pedidos'){ renderPedidos(); }
+  else if(sub==='escandallo'){ escInit(); }
+  else if(sub==='impresion'){ renderPrintSheet(); }
 }
 
 function onTrabajoAdd(){
@@ -586,17 +879,34 @@ function setRF(f,btn){ curResFilter=f; document.querySelectorAll('[data-rf]').fo
 function setPF(f,btn){ curPedFilter=f; document.querySelectorAll('[data-pf]').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderPedidos(); }
 function filterFin(f,btn){ curFinFilter=f; document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderFinanzas(); }
 
+let curFinTab='movimientos';
+function switchFinTab(sub,btn){
+  curFinTab=sub;
+  document.querySelectorAll('#panel-finanzas .stab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#panel-finanzas .subpanel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sub-'+sub).classList.add('active');
+  const addBtn=document.getElementById('fin-add-btn');
+  if(sub==='ahorros'){addBtn.textContent='+ Nuevo ahorro';addBtn.onclick=()=>openModal('ahorros');renderAhorros();}
+  else{addBtn.textContent='+ Añadir';addBtn.onclick=()=>openModal('finanzas');renderFinanzas();}
+}
+function onFinAdd(){
+  if(curFinTab==='ahorros') openModal('ahorros');
+  else openModal('finanzas');
+}
+
 function render(tab){
   if(tab==='calendario'){ if(curCalTab==='mes') renderCalendar(); else renderBirthdays(); }
   else if(tab==='trabajo'){
     renderTrabajo();
-    if(curWorkTab==='reservas') renderReservas();
-    else if(curWorkTab==='pedidos') renderPedidos();
+    renderReservas();
+    renderPedidos();
   }
   else if(tab==='finanzas') renderFinanzas();
   else if(tab==='pasatiempo') renderPasatiempo();
   else if(tab==='gimnasia') renderGimnasia();
   else if(tab==='objetivos') renderObjetivos();
+  else if(tab==='glucosa') renderGlucosa();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -671,17 +981,46 @@ function showDayDetail(iso){
     document.getElementById('cal-detail-events').innerHTML='<div style="color:var(--muted);font-size:.85rem;padding:10px 0">Sin eventos este día.</div>';
     return;
   }
-  document.getElementById('cal-detail-events').innerHTML = evs.map(e=>`
-    <div class="cal-event-item">
-      <div class="cal-event-dot" style="background:${e.color}"></div>
-      <div class="cal-event-info">
-        <div class="cal-event-title">${esc(e.title)}</div>
-        <div class="cal-event-meta">${e.time?'🕐 '+e.time+' · ':''}${e.desc?esc(e.desc):''}</div>
+  document.getElementById('cal-detail-events').innerHTML = evs.map((e,i)=>{
+    const typeLabel = ({cita:'🩺 Cita',evento:'📌 Evento',reserva:'🍽️ Reserva',gym:'🏋️ Entreno',cumple:'🎂 Cumpleaños'})[e._type]||e._type;
+    const notifLabel = e.notif ? (e.notif>=60 ? (e.notif/60)+'h' : e.notif+' min')+' antes' : null;
+    let bodyRows = '';
+    if(e.time) bodyRows += `<div class="cev-row"><span class="cev-lbl">Hora</span><span>🕐 ${e.time}</span></div>`;
+    if(e.desc) bodyRows += `<div class="cev-row"><span class="cev-lbl">Notas</span><span>${esc(e.desc)}</span></div>`;
+    if(notifLabel) bodyRows += `<div class="cev-row"><span class="cev-lbl">Aviso</span><span>🔔 ${notifLabel}</span></div>`;
+    if(e._type==='reserva'){
+      bodyRows += `<div class="cev-row"><span class="cev-lbl">Mesa</span><span>Mesa ${e.table} · ${e.pax} comensales</span></div>`;
+      if(e.phone) bodyRows += `<div class="cev-row"><span class="cev-lbl">Tel.</span><span>📞 ${esc(e.phone)}</span></div>`;
+      if(e.menuName) bodyRows += `<div class="cev-row"><span class="cev-lbl">Menú</span><span>🍴 ${esc(e.menuName)}</span></div>`;
+      if(e.notes) bodyRows += `<div class="cev-row"><span class="cev-lbl">Notas</span><span>${esc(e.notes)}</span></div>`;
+    }
+    const canEdit   = e._type==='cita'||e._type==='evento';
+    const canDelete = e._type!=='reserva'&&e._type!=='gym'&&e._type!=='cumple';
+    return `<div class="cev-card" id="cev-${i}">
+      <div class="cev-head" onclick="toggleCev('cev-${i}')">
+        <div class="cev-dot" style="background:${e.color}"></div>
+        <div class="cev-info">
+          <div class="cev-title">${esc(e.title)}</div>
+          <div class="cev-sub">${typeLabel}${e.time?' · 🕐 '+e.time:''}</div>
+        </div>
+        <span class="cev-arrow">▼</span>
       </div>
-      ${e._type!=='reserva'&&e._type!=='gym'&&e._type!=='cumple'?
-        `<button class="btn-sm d" onclick="deleteCalEvent('${e._type}',${e.id})">✕</button>`:''}
-    </div>`).join('');
+      <div class="cev-body">
+        ${bodyRows||'<div style="color:var(--muted);font-size:.82rem">Sin detalles adicionales.</div>'}
+        ${canEdit||canDelete?`<div class="card-actions" style="margin-top:12px">
+          ${canEdit?`<button class="btn-sm" onclick="editCalEvent('${e._type}',${e.id})">✎ Editar</button>`:''}
+          ${canDelete?`<button class="btn-sm d" onclick="deleteCalEvent('${e._type}',${e.id})">✕ Eliminar</button>`:''}
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
+
+function toggleCev(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.toggle('open');
+}
+function editCalEvent(type,id){ openModal(type,id); }
 
 function deleteCalEvent(type,id){
   if(!confirm('¿Eliminar este evento?')) return;
@@ -779,9 +1118,16 @@ function empty(ic,msg){ return`<div class="empty" style="grid-column:1/-1"><div 
 function renderTrabajo(){
   const c=document.getElementById('list-trabajo');
   if(!S.trabajo.length){c.innerHTML=empty('💼','Sin tareas.');return;}
-  c.innerHTML=S.trabajo.map(t=>`
-    <div class="card">
-      <div class="card-top"><div><div class="card-title">${esc(t.title)}</div><div class="card-meta">📅 ${fmtDate(t.date)}</div></div>${sBadge(t.status)}</div>
+  c.innerHTML=S.trabajo.map((t,i)=>`
+    <div class="card draggable" draggable="true" data-idx="${i}" data-list="trabajo"
+      ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dragDrop(event,'trabajo')" ondragleave="dragLeave(event)">
+      <div class="card-top">
+        <div style="display:flex;align-items:flex-start;gap:6px">
+          <span class="drag-handle">⠿</span>
+          <div><div class="card-title">${esc(t.title)}</div><div class="card-meta">📅 ${fmtDate(t.date)}</div></div>
+        </div>
+        ${sBadge(t.status)}
+      </div>
       ${t.desc?`<div class="card-desc">${esc(t.desc)}</div>`:''}
       <div class="card-actions">
         <button class="btn-sm" onclick="toggleSt('trabajo',${t.id})">✓ Estado</button>
@@ -826,6 +1172,7 @@ function renderReservas(){
         <div class="card-actions" style="margin-top:12px">
           <button class="btn-sm g" onclick="cycleRes(${r.id})">✓ Estado</button>
           <button class="btn-sm" onclick="editItem('reservas',${r.id})">✎ Editar</button>
+          <button class="btn-sm btn-wa" onclick="shareWhatsApp(${r.id})">📲 WhatsApp</button>
           <button class="btn-sm d" onclick="delItem('reservas',${r.id})">✕</button>
         </div>
       </div>
@@ -907,6 +1254,62 @@ function renderFinanzas(){
 }
 
 // ══════════════════════════════════════════════════════════════
+// RENDER AHORROS
+// ══════════════════════════════════════════════════════════════
+function renderAhorros(){
+  const totalSaved=S.ahorros.reduce((a,x)=>a+x.saved,0);
+  const totalTarget=S.ahorros.reduce((a,x)=>a+x.target,0);
+  const globalPct=totalTarget>0?Math.round(totalSaved/totalTarget*100):0;
+  document.getElementById('st-ah-total').textContent=S.ahorros.length;
+  document.getElementById('st-ah-saved').textContent='€'+totalSaved.toLocaleString('es');
+  document.getElementById('st-ah-target').textContent='€'+totalTarget.toLocaleString('es');
+  document.getElementById('st-ah-pct').textContent=globalPct+'%';
+  const c=document.getElementById('list-ahorros');
+  if(!S.ahorros.length){c.innerHTML=empty('🏦','Sin objetivos de ahorro.');return;}
+  c.innerHTML=S.ahorros.map(a=>{
+    const pct=a.target>0?Math.min(100,Math.round(a.saved/a.target*100)):0;
+    const remaining=Math.max(0,a.target-a.saved);
+    const col=a.color||'var(--af)';
+    return`<div class="ahorro-card" style="border-left:4px solid ${col}">
+      <div class="ahorro-top">
+        <div>
+          <div class="card-title">${esc(a.title)}</div>
+          <div class="card-meta">🏁 ${fmtDate(a.deadline||a.date)}</div>
+          ${a.desc?`<div class="card-desc" style="margin-top:5px">${esc(a.desc)}</div>`:''}
+        </div>
+        <div class="ahorro-amounts" style="text-align:right">
+          <div class="ahorro-saved" style="color:${col}">€${a.saved.toLocaleString('es')}</div>
+          <div class="ahorro-target">de €${a.target.toLocaleString('es')}</div>
+        </div>
+      </div>
+      <div class="ahorro-bar"><div class="ahorro-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="ahorro-pct"><span>${pct}% conseguido</span><span>Faltan €${remaining.toLocaleString('es')}</span></div>
+      <div class="card-actions" style="margin-top:12px">
+        <button class="btn-sm" onclick="ahorroDeposit(${a.id})">+ Ingresar</button>
+        <button class="btn-sm" onclick="ahorroWithdraw(${a.id})">− Retirar</button>
+        <button class="btn-sm" onclick="editItem('ahorros',${a.id})">✎ Editar</button>
+        <button class="btn-sm d" onclick="delItem('ahorros',${a.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function ahorroDeposit(id){
+  const a=S.ahorros.find(x=>x.id===id); if(!a)return;
+  const val=parseFloat(prompt(`¿Cuánto ingresas en "${a.title}"? (€)`));
+  if(isNaN(val)||val<=0)return;
+  a.saved=Math.min(a.target,a.saved+val); save(); renderAhorros();
+  showToast(`✅ +€${val.toLocaleString('es')} ingresados en ${a.title}`);
+}
+function ahorroWithdraw(id){
+  const a=S.ahorros.find(x=>x.id===id); if(!a)return;
+  const val=parseFloat(prompt(`¿Cuánto retiras de "${a.title}"? (€)`));
+  if(isNaN(val)||val<=0)return;
+  a.saved=Math.max(0,a.saved-val); save(); renderAhorros();
+  showToast(`💸 −€${val.toLocaleString('es')} retirados de ${a.title}`);
+}
+
+// ══════════════════════════════════════════════════════════════
 // RENDER PASATIEMPOS
 // ══════════════════════════════════════════════════════════════
 function renderPasatiempo(){
@@ -967,8 +1370,9 @@ function toggleGymDone(id){ const g=S.gimnasia.find(x=>x.id===id); if(g){g.done=
 function renderObjetivos(){
   const c=document.getElementById('list-objetivos');
   if(!S.objetivos.length){c.innerHTML=empty('🎯','Sin objetivos.');return;}
-  c.innerHTML=S.objetivos.map(o=>`
-    <div class="goal-card">
+  c.innerHTML=S.objetivos.map((o,i)=>`
+    <div class="goal-card draggable" draggable="true" data-idx="${i}" data-list="objetivos"
+      ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dragDrop(event,'objetivos')" ondragleave="dragLeave(event)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
         <div><div class="card-title">${esc(o.title)}</div><div class="card-meta">🏁 ${fmtDate(o.deadline)}</div></div>
         <span style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--ao)">${o.progress}%</span>
@@ -1074,6 +1478,27 @@ const MFIELDS = {
     </div>
     <div class="fg"><label>Notas</label><textarea id="f_desc" rows="2" placeholder="Descripción…"></textarea></div>`,
 
+  ahorros:`
+    <div class="fg"><label>Nombre del objetivo</label><input id="f_title" placeholder="Ej: Vacaciones verano"></div>
+    <div class="frow">
+      <div class="fg"><label>Objetivo (€)</label><input id="f_target" type="number" min="0" step="1" placeholder="1000"></div>
+      <div class="fg"><label>Ya ahorrado (€)</label><input id="f_saved" type="number" min="0" step="1" placeholder="0"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Fecha límite</label><input id="f_deadline" type="date"></div>
+      <div class="fg"><label>Color</label>
+        <select id="f_color">
+          <option value="#4ecb71">Verde</option>
+          <option value="#38c9c9">Turquesa</option>
+          <option value="#b47cf7">Violeta</option>
+          <option value="#f4a553">Naranja</option>
+          <option value="#6c8fff">Azul</option>
+          <option value="#e05a7a">Rosa</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Descripción</label><textarea id="f_desc" rows="2" placeholder="Para qué es este ahorro…"></textarea></div>`,
+
   pasatiempo:`
     <div class="fg"><label>Actividad</label><input id="f_title" placeholder="Nombre del pasatiempo"></div>
     <div class="frow">
@@ -1090,6 +1515,30 @@ const MFIELDS = {
     </div>
     <div class="fg"><label>Ejercicios</label><textarea id="f_desc" rows="2" placeholder="Ejercicios planificados…"></textarea></div>`,
 
+  glucosa:`
+    <div class="frow">
+      <div class="fg"><label>Valor (mg/dL)</label><input id="f_valor" type="number" min="20" max="600" placeholder="Ej: 95" style="font-size:1.1rem;font-weight:600"></div>
+      <div class="fg"><label>Fecha</label><input id="f_date" type="date"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Hora</label><input id="f_time" type="time" value="08:00"></div>
+      <div class="fg"><label>Momento</label>
+        <select id="f_momento">
+          <option value="Ayunas">Ayunas</option>
+          <option value="Antes de desayuno">Antes de desayuno</option>
+          <option value="2h post-desayuno">2h post-desayuno</option>
+          <option value="Antes de comida">Antes de comida</option>
+          <option value="2h post-comida">2h post-comida</option>
+          <option value="Antes de cena">Antes de cena</option>
+          <option value="2h post-cena">2h post-cena</option>
+          <option value="Madrugada">Madrugada (3:00)</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Medicación / Insulina</label><input id="f_medicacion" placeholder="Ej: Metformina 500mg, Insulina 4UI…"></div>
+    <div class="fg"><label>Notas</label><textarea id="f_notas" rows="2" placeholder="Comida, actividad física, incidencias…"></textarea></div>`,
+
   objetivos:`
     <div class="fg"><label>Objetivo</label><input id="f_title" placeholder="¿Qué quieres lograr?"></div>
     <div class="frow">
@@ -1099,8 +1548,8 @@ const MFIELDS = {
     <div class="fg"><label>Descripción</label><textarea id="f_desc" rows="2" placeholder="Cómo lo conseguirás…"></textarea></div>`
 };
 
-const MNAMES2={cita:'Cita',evento:'Evento',cumple:'Cumpleaños',trabajo:'Tarea',reservas:'Reserva',pedidos:'Pedido',finanzas:'Movimiento',pasatiempo:'Actividad',gimnasia:'Entreno',objetivos:'Objetivo'};
-const MCOLORS={cita:'var(--ac)',evento:'var(--ao)',cumple:'#f4553a',trabajo:'var(--aw)',reservas:'var(--aw)',pedidos:'var(--aw)',finanzas:'var(--af)',pasatiempo:'var(--ah)',gimnasia:'var(--ag)',objetivos:'var(--ao)'};
+const MNAMES2={cita:'Cita',evento:'Evento',cumple:'Cumpleaños',trabajo:'Tarea',reservas:'Reserva',pedidos:'Pedido',finanzas:'Movimiento',ahorros:'Ahorro',pasatiempo:'Actividad',gimnasia:'Entreno',objetivos:'Objetivo',glucosa:'Toma de glucosa'};
+const MCOLORS={cita:'var(--ac)',evento:'var(--ao)',cumple:'#f4553a',trabajo:'var(--aw)',reservas:'var(--aw)',pedidos:'var(--aw)',finanzas:'var(--af)',ahorros:'var(--af)',pasatiempo:'var(--ah)',gimnasia:'var(--ag)',objetivos:'var(--ao)',glucosa:'var(--ag)'};
 
 function openModal(section, id=null){
   mSection=section; mEditId=id; mCourses=[]; mItems=[];
@@ -1117,7 +1566,9 @@ function openModal(section, id=null){
     const arr = ['cita','evento'].includes(section)?S[section+'s']:
                 section==='cumple'?S.cumples:
                 section==='reservas'?S.reservas:
-                section==='pedidos'?S.pedidos:S[section];
+                section==='pedidos'?S.pedidos:
+                section==='ahorros'?S.ahorros:
+                section==='glucosa'?S.glucosa:S[section];
     const item = arr?.find(x=>x.id===id);
     if(item){
       const g=n=>document.getElementById(n);
@@ -1138,6 +1589,13 @@ function openModal(section, id=null){
       if(g('f_pax')) g('f_pax').value=item.pax||'';
       if(g('f_phone')) g('f_phone').value=item.phone||'';
       if(g('f_menuName')) g('f_menuName').value=item.menuName||'';
+      if(g('f_valor')) g('f_valor').value=item.valor||'';
+      if(g('f_momento')) g('f_momento').value=item.momento||'Ayunas';
+      if(g('f_medicacion')) g('f_medicacion').value=item.medicacion||'';
+      if(g('f_notas')) g('f_notas').value=item.notas||item.desc||'';
+      if(g('f_target')) g('f_target').value=item.target||0;
+      if(g('f_saved')) g('f_saved').value=item.saved||0;
+      if(g('f_color')) g('f_color').value=item.color||'#4ecb71';
       if(g('f_month')&&item.date) g('f_month').value=item.date.split('-')[0];
       if(g('f_day')&&item.date) g('f_day').value=parseInt(item.date.split('-')[1])||'';
       if(item.menu){ mCourses=[...item.menu]; renderMCourses(); }
@@ -1207,6 +1665,37 @@ function saveItem(){
     save(); closeModal(); renderReservas(); renderCalendar(); return;
   }
 
+  if(s==='glucosa'){
+    const valor=parseFloat(g('f_valor'));
+    if(!valor||valor<20||valor>600){alert('Introduce un valor válido (20-600 mg/dL).');return;}
+    const item={id:mEditId||Date.now(),
+      date:g('f_date')||TISO,
+      time:g('f_time')||'08:00',
+      valor,
+      momento:g('f_momento')||'Ayunas',
+      medicacion:g('f_medicacion')||'',
+      notas:g('f_notas')||''};
+    if(!S.glucosa) S.glucosa=[];
+    if(mEditId){const idx=S.glucosa.findIndex(x=>x.id===mEditId);if(idx!==-1)S.glucosa[idx]=item;}
+    else S.glucosa.push(item);
+    save(); closeModal(); renderGlucosa();
+    showToast('✅ Toma registrada: '+valor+' mg/dL');
+    return;
+  }
+
+  if(s==='ahorros'){
+    const title=g('f_title'); if(!title){alert('El nombre es obligatorio.');return;}
+    const item={id:mEditId||Date.now(),title,
+      target:parseFloat(g('f_target'))||0,
+      saved:parseFloat(g('f_saved'))||0,
+      deadline:g('f_deadline')||TISO,
+      color:g('f_color')||'#4ecb71',
+      desc:g('f_desc')||''};
+    if(mEditId){const idx=S.ahorros.findIndex(x=>x.id===mEditId);if(idx!==-1)S.ahorros[idx]=item;}
+    else S.ahorros.push(item);
+    save(); closeModal(); renderAhorros(); return;
+  }
+
   if(s==='pedidos'){
     const title=g('f_title'); if(!title){alert('El proveedor es obligatorio.');return;}
     const item={id:mEditId||Date.now(),supplier:title,date:g('f_date')||TISO,status:g('f_status')||'pending',notes:g('f_notes')||'',items:mItems.filter(i=>i.name)};
@@ -1238,10 +1727,13 @@ function delItem(section,id){
   if(!confirm('¿Eliminar este elemento?')) return;
   if(section==='reservas') S.reservas=S.reservas.filter(x=>x.id!==id);
   else if(section==='pedidos') S.pedidos=S.pedidos.filter(x=>x.id!==id);
+  else if(section==='ahorros') S.ahorros=S.ahorros.filter(x=>x.id!==id);
+  else if(section==='glucosa'){ S.glucosa=S.glucosa.filter(x=>x.id!==id); save(); renderGlucosa(); return; }
   else S[section]=S[section].filter(x=>x.id!==id);
   save();
   if(section==='reservas') renderReservas();
   else if(section==='pedidos') renderPedidos();
+  else if(section==='ahorros') renderAhorros();
   else render(curTab);
   renderCalendar();
 }
@@ -1255,9 +1747,716 @@ function toggleSt(tab,id){
 document.getElementById('MO').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 // ══════════════════════════════════════════════════════════════
+// WHATSAPP SHARE
+// ══════════════════════════════════════════════════════════════
+function shareWhatsApp(id){
+  const r = S.reservas.find(x=>x.id===id);
+  if(!r) return;
+  const [y,m,d] = r.date.split('-');
+  const dateStr = `${parseInt(d)} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][parseInt(m)-1]} de ${y}`;
+
+  let msg = `🍽️ *Reserva confirmada*
+
+`;
+  msg += `👤 *Cliente:* ${r.client}
+`;
+  msg += `📅 *Fecha:* ${dateStr}
+`;
+  msg += `🕐 *Hora:* ${r.time}
+`;
+  msg += `🪑 *Mesa:* ${r.table} · ${r.pax} ${r.pax===1?'comensal':'comensales'}
+`;
+  if(r.phone && r.phone!=='—') msg += `📞 *Tel:* ${r.phone}
+`;
+  if(r.notes) msg += `📝 *Notas:* ${r.notes}
+`;
+  if(r.menuName) msg += `
+🍴 *Menú:* ${r.menuName}
+`;
+  if(r.menu && r.menu.length){
+    r.menu.forEach(p=>{ msg += `  • ${p.course}: ${p.dish}
+`; });
+  }
+  msg += `
+✅ Estado: ${({confirmed:'Confirmada',pending:'Pendiente',cancelled:'Cancelada'})[r.status]||r.status}`;
+
+  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+// ══════════════════════════════════════════════════════════════
+// EXPORT .ICS (iCalendar)
+// ══════════════════════════════════════════════════════════════
+function exportICS(){
+  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Mi Agenda Personal//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+
+  function toICSDate(dateStr, timeStr){
+    const [y,m,d] = dateStr.split('-');
+    if(timeStr){
+      const [hh,mm] = timeStr.split(':');
+      return `${y}${m}${d}T${hh}${mm}00`;
+    }
+    return `${y}${m}${d}`;
+  }
+
+  function addEvent(title, dateStr, timeStr, desc, uid){
+    lines.push('BEGIN:VEVENT');
+    lines.push('UID:'+uid+'@miagenda');
+    lines.push('DTSTAMP:'+toICSDate(TISO,'00:00'));
+    if(timeStr){
+      lines.push('DTSTART:'+toICSDate(dateStr,timeStr));
+      // default 1h duration
+      const [hh,mm] = timeStr.split(':').map(Number);
+      const endH = String(hh+1).padStart(2,'0');
+      lines.push('DTEND:'+toICSDate(dateStr,endH+':'+String(mm).padStart(2,'0')));
+    } else {
+      lines.push('DTSTART;VALUE=DATE:'+toICSDate(dateStr,null));
+      lines.push('DTEND;VALUE=DATE:'+toICSDate(dateStr,null));
+    }
+    lines.push('SUMMARY:'+title.split(',').join('\\,'));
+    if(desc) lines.push('DESCRIPTION:'+desc.split('\n').join('\\n').split(',').join('\\,'));
+    lines.push('END:VEVENT');
+  }
+
+  // Citas
+  S.citas.forEach(c=>{
+    addEvent(`🩺 ${c.title}`, c.date, c.time, c.desc||'', `cita-${c.id}`);
+  });
+
+  // Eventos
+  S.eventos.forEach(e=>{
+    addEvent(`📌 ${e.title}`, e.date, e.time, e.desc||'', `evento-${e.id}`);
+  });
+
+  // Reservas
+  S.reservas.filter(r=>r.status!=='cancelled').forEach(r=>{
+    const desc = [
+      `Mesa ${r.table} · ${r.pax} comensales`,
+      r.phone?`Tel: ${r.phone}`:'',
+      r.menuName?`Menú: ${r.menuName}`:'',
+      r.notes||''
+    ].filter(Boolean).join(' | ');
+    addEvent(`🍽️ Reserva: ${r.client}`, r.date, r.time, desc, `res-${r.id}`);
+  });
+
+  // Cumpleaños (recurrentes cada año)
+  S.cumples.forEach(b=>{
+    const [mm,dd] = b.date.split('-');
+    const fakeYear = new Date().getFullYear();
+    const dateStr = `${fakeYear}-${mm}-${dd}`;
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:cumple-${b.id}@miagenda`);
+    lines.push('DTSTAMP:'+toICSDate(TISO,'00:00'));
+    lines.push(`DTSTART;VALUE=DATE:${fakeYear}${mm}${dd}`);
+    lines.push(`DTEND;VALUE=DATE:${fakeYear}${mm}${dd}`);
+    lines.push(`SUMMARY:🎂 Cumpleaños de ${b.name}`);
+    lines.push('RRULE:FREQ=YEARLY');
+    lines.push('END:VEVENT');
+  });
+
+  // Entrenos
+  S.gimnasia.forEach(g=>{
+    addEvent(`🏋️ ${g.title}`, g.date, '08:00', g.desc||'', `gym-${g.id}`);
+  });
+
+  lines.push('END:VCALENDAR');
+
+  const icsContent = lines.join('\r\n');
+  const blob = new Blob([icsContent], {type:'text/calendar;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'mi-agenda.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`✅ Exportadas ${S.citas.length + S.eventos.length + S.reservas.filter(r=>r.status!=='cancelled').length + S.cumples.length + S.gimnasia.length} entradas al calendario`);
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// WEEKLY SUMMARY
+// ══════════════════════════════════════════════════════════════
+function renderWeeklySummary(){
+  const dow = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const colors = {cita:'var(--ac)',evento:'var(--ao)',reserva:'var(--aw)',gym:'var(--ag)',cumple:'#f4553a'};
+  const sd = new Date(TODAY); sd.setDate(TODAY.getDate()-TODAY.getDay());
+  let html='';
+  let allEventsHtml='';
+  for(let i=0;i<7;i++){
+    const d=new Date(sd); d.setDate(sd.getDate()+i);
+    const iso=d.toISOString().split('T')[0];
+    const isT=d.toDateString()===TODAY.toDateString();
+    const evs=getEventsForDate(iso);
+    const dots=evs.slice(0,4).map(e=>`<div class="ws-event" style="background:${e.color}22;color:${e.color};border-left:3px solid ${e.color}">${esc(e.title).slice(0,18)}${e.title.length>18?'…':''}</div>`).join('');
+    const more=evs.length>4?`<div style="font-size:.68rem;color:var(--muted)">+${evs.length-4} más</div>`:'';
+    html+=`<div class="ws-day ${isT?'today':''}" onclick="selectDay('${iso}');switchCalTab('mes',document.querySelector('[onclick*=switchCalTab][onclick*=mes]'))">
+      <div class="ws-day-hd">${dow[i]}</div>
+      <div class="ws-day-num">${d.getDate()}</div>
+      ${dots}${more}
+    </div>`;
+  }
+  document.getElementById('week-summary-grid').innerHTML=html;
+  // Detail panel
+  const allEvs=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(sd); d.setDate(sd.getDate()+i);
+    const iso=d.toISOString().split('T')[0];
+    getEventsForDate(iso).forEach(e=>allEvs.push({...e,_iso:iso,_dow:dow[i],_dnum:d.getDate()}));
+  }
+  if(!allEvs.length){
+    document.getElementById('week-summary-detail').innerHTML='<div class="empty"><div class="ei">📆</div><p>Semana libre de eventos.</p></div>';
+    return;
+  }
+  const grouped={};
+  allEvs.forEach(e=>{
+    const k=e._iso; if(!grouped[k]) grouped[k]=[]; grouped[k].push(e);
+  });
+  allEventsHtml=Object.keys(grouped).sort().map(iso=>{
+    const [y,m,d]=iso.split('-');
+    const isT=iso===TISO;
+    const label=`${grouped[iso][0]._dow} ${parseInt(d)}/${parseInt(m)}`;
+    return`<div style="margin-bottom:16px">
+      <div style="font-size:.8rem;font-weight:700;color:${isT?'var(--ac)':'var(--soft)'};margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        ${isT?'<span style="background:var(--ac);color:#000;border-radius:50px;padding:1px 8px;font-size:.72rem">HOY</span>':''} ${label}
+      </div>
+      ${grouped[iso].map(e=>`<div style="display:flex;align-items:flex-start;gap:9px;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-left:3px solid ${e.color};border-radius:8px;margin-bottom:6px">
+        <div style="flex:1">
+          <div style="font-size:.87rem;font-weight:600">${esc(e.title)}</div>
+          ${e.time?`<div style="font-size:.74rem;color:var(--muted);margin-top:2px">🕐 ${e.time}</div>`:''}
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+  document.getElementById('week-summary-detail').innerHTML=allEventsHtml;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ESCANDALLO
+// ══════════════════════════════════════════════════════════════
+let escIngredients = [{name:'',qty:0,unit:'kg',price:0}];
+
+function escInit(){
+  if(!escIngredients.length) escIngredients=[{name:'',qty:0,unit:'kg',price:0}];
+  escRenderRows();
+  escCalc();
+  escRenderSaved();
+}
+
+function escAddRow(){
+  escIngredients.push({name:'',qty:0,unit:'kg',price:0});
+  escRenderRows(); escCalc();
+}
+
+function escRemoveRow(i){
+  escIngredients.splice(i,1);
+  escRenderRows(); escCalc();
+}
+
+function escRenderRows(){
+  const c=document.getElementById('esc-rows'); if(!c) return;
+  c.innerHTML=escIngredients.map((ing,i)=>`
+    <div class="esc-ing-row">
+      <input placeholder="Ingrediente" value="${esc(ing.name)}" oninput="escIngredients[${i}].name=this.value;escCalc()">
+      <input type="number" placeholder="Cant." min="0" step="0.001" value="${ing.qty||''}" oninput="escIngredients[${i}].qty=parseFloat(this.value)||0;escCalc()">
+      <select oninput="escIngredients[${i}].unit=this.value" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none">
+        ${['kg','g','l','ml','ud','ración'].map(u=>`<option value="${u}" ${u===ing.unit?'selected':''}>${u}</option>`).join('')}
+      </select>
+      <input type="number" placeholder="€/u" min="0" step="0.01" value="${ing.price||''}" oninput="escIngredients[${i}].price=parseFloat(this.value)||0;escCalc()">
+      <button onclick="escRemoveRow(${i})" style="padding:6px 9px;border-radius:7px;border:1px solid var(--ag)44;background:transparent;color:var(--ag);cursor:pointer;font-size:.78rem">✕</button>
+    </div>`).join('');
+}
+
+function escCalc(){
+  const raciones=parseInt(document.getElementById('esc-raciones')?.value)||1;
+  const mdo=parseFloat(document.getElementById('esc-mdo')?.value)||0;
+  const pvp=parseFloat(document.getElementById('esc-pvp')?.value)||0;
+  const costeMat=escIngredients.reduce((a,i)=>a+(i.qty*i.price),0);
+  const costeMdo=costeMat*(mdo/100);
+  const costeTotal=costeMat+costeMdo;
+  const costePorRacion=raciones>0?costeTotal/raciones:0;
+  const margen=pvp>0?((pvp-costePorRacion)/pvp*100):0;
+  const markup=costePorRacion>0?((pvp-costePorRacion)/costePorRacion*100):0;
+  const c=document.getElementById('esc-result'); if(!c) return;
+  const mColor=margen>=60?'var(--af)':margen>=40?'var(--ah)':'var(--ag)';
+  c.innerHTML=`
+    <div class="esc-res-box"><div class="esc-res-val" style="color:var(--ag)">€${costePorRacion.toFixed(2)}</div><div class="esc-res-lbl">Coste / ración</div></div>
+    <div class="esc-res-box"><div class="esc-res-val" style="color:${mColor}">${margen.toFixed(1)}%</div><div class="esc-res-lbl">Margen bruto</div></div>
+    <div class="esc-res-box"><div class="esc-res-val" style="color:var(--af)">€${(pvp-costePorRacion).toFixed(2)}</div><div class="esc-res-lbl">Beneficio / ración</div></div>`;
+}
+
+function escSave(){
+  const name=document.getElementById('esc-name')?.value||'Sin nombre';
+  const raciones=parseInt(document.getElementById('esc-raciones')?.value)||1;
+  const mdo=parseFloat(document.getElementById('esc-mdo')?.value)||0;
+  const pvp=parseFloat(document.getElementById('esc-pvp')?.value)||0;
+  const costeMat=escIngredients.reduce((a,i)=>a+(i.qty*i.price),0);
+  const costeTotal=costeMat*(1+mdo/100);
+  const costePorRacion=costeTotal/raciones;
+  const margen=pvp>0?((pvp-costePorRacion)/pvp*100):0;
+  if(!S.escandallos) S.escandallos=[];
+  S.escandallos.push({id:Date.now(),name,raciones,pvp,costePorRacion:+costePorRacion.toFixed(3),margen:+margen.toFixed(1),ingredients:[...escIngredients]});
+  save(); escRenderSaved();
+  showToast('✅ Escandallo guardado: '+name);
+}
+
+function escReset(){
+  escIngredients=[{name:'',qty:0,unit:'kg',price:0}];
+  if(document.getElementById('esc-name')) document.getElementById('esc-name').value='';
+  escRenderRows(); escCalc();
+}
+
+function escRenderSaved(){
+  if(!S.escandallos||!S.escandallos.length) return;
+  const c=document.getElementById('esc-saved-list'); if(!c) return;
+  c.innerHTML=`<div style="font-size:.8rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Escandallos guardados</div>`+
+  S.escandallos.map(e=>`
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-top">
+        <div><div class="card-title">${esc(e.name)}</div><div class="card-meta">${e.raciones} raciones · PVP €${e.pvp}</div></div>
+        <div style="text-align:right">
+          <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--ag)">€${e.costePorRacion}/rac</div>
+          <div style="font-size:.76rem;color:${e.margen>=60?'var(--af)':e.margen>=40?'var(--ah)':'var(--ag)'}">Margen ${e.margen}%</div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-sm" onclick="escLoad(${e.id})">📂 Cargar</button>
+        <button class="btn-sm d" onclick="escDel(${e.id})">✕ Borrar</button>
+      </div>
+    </div>`).join('');
+}
+
+function escLoad(id){
+  const e=S.escandallos.find(x=>x.id===id); if(!e) return;
+  escIngredients=[...e.ingredients];
+  if(document.getElementById('esc-name')) document.getElementById('esc-name').value=e.name;
+  if(document.getElementById('esc-raciones')) document.getElementById('esc-raciones').value=e.raciones;
+  if(document.getElementById('esc-pvp')) document.getElementById('esc-pvp').value=e.pvp;
+  escRenderRows(); escCalc();
+}
+
+function escDel(id){
+  S.escandallos=S.escandallos.filter(x=>x.id!==id); save(); escRenderSaved();
+}
+
+// ══════════════════════════════════════════════════════════════
+// PRINT SERVICE SHEET
+// ══════════════════════════════════════════════════════════════
+function renderPrintSheet(){
+  const pd = document.getElementById('print-date');
+  const dateStr = pd?.value || TISO;
+  if(pd && !pd.value) pd.value=dateStr;
+  const [y,m,d]=dateStr.split('-');
+  const dow=new Date(parseInt(y),parseInt(m)-1,parseInt(d)).getDay();
+  const dateLabel=`${DNAMES[dow]}, ${parseInt(d)} de ${MNAMES[parseInt(m)-1]} ${y}`;
+
+  const reservasDay=S.reservas.filter(r=>r.date===dateStr&&r.status!=='cancelled')
+    .sort((a,b)=>a.time.localeCompare(b.time));
+  const citasDay=[...S.citas,...S.eventos].filter(e=>e.date===dateStr)
+    .sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+
+  let html=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border)">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700">Hoja de Servicio</div>
+        <div style="font-size:.9rem;color:var(--soft);margin-top:4px">${dateLabel}</div>
+      </div>
+      <div style="text-align:right;font-size:.82rem;color:var(--muted)">
+        <div>${reservasDay.length} reservas · ${reservasDay.reduce((a,r)=>a+r.pax,0)} comensales</div>
+        <div style="margin-top:3px">${reservasDay.filter(r=>r.status==='confirmed').length} confirmadas</div>
+      </div>
+    </div>`;
+
+  if(reservasDay.length){
+    html+=`<div style="font-size:.75rem;font-weight:700;color:var(--aw);text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px">🍽️ Reservas del servicio</div>`;
+    reservasDay.forEach(r=>{
+      html+=`<div style="border:1px solid var(--border);border-left:4px solid var(--aw);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <span style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--aw)">Mesa ${r.table}</span>
+            <span style="font-size:.8rem;color:var(--muted);margin-left:10px">🕐 ${r.time} · 👥 ${r.pax} personas</span>
+          </div>
+          <div style="font-weight:600;font-size:.9rem">${esc(r.client)}</div>
+        </div>
+        ${r.menuName?`<div style="font-size:.78rem;background:var(--surface2);display:inline-block;padding:2px 10px;border-radius:50px;color:var(--aw);margin-bottom:8px">🍴 ${esc(r.menuName)}</div>`:''}
+        ${r.menu&&r.menu.length?`<div style="display:flex;flex-wrap:wrap;gap:6px">${r.menu.map(p=>`<span style="font-size:.76rem;background:var(--surface2);padding:3px 9px;border-radius:6px;color:var(--soft)"><b style="color:var(--muted)">${esc(p.course)}:</b> ${esc(p.dish)}</span>`).join('')}</div>`:''}
+        ${r.notes?`<div style="margin-top:8px;font-size:.78rem;color:var(--muted);background:var(--surface2);padding:6px 10px;border-radius:7px">📝 ${esc(r.notes)}</div>`:''}
+      </div>`;
+    });
+  } else {
+    html+=`<div style="color:var(--muted);font-size:.87rem;padding:20px 0">Sin reservas para este día.</div>`;
+  }
+
+  if(citasDay.length){
+    html+=`<div style="font-size:.75rem;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.7px;margin:20px 0 12px">🗓️ Citas y eventos</div>`;
+    citasDay.forEach(c=>{
+      html+=`<div style="border:1px solid var(--border);border-left:4px solid var(--ac);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;gap:12px;align-items:center">
+        <div style="font-size:.85rem;font-weight:600">${c.time?`<span style="color:var(--ac);font-family:'Playfair Display',serif;font-size:1rem">${c.time}</span> · `:''} ${esc(c.title)}</div>
+        ${c.desc?`<div style="font-size:.78rem;color:var(--muted);margin-left:auto">${esc(c.desc)}</div>`:''}
+      </div>`;
+    });
+  }
+
+  html+=`</div>`;
+  const container=document.getElementById('print-sheet-preview');
+  if(container) container.innerHTML=html;
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// THEME TOGGLE
+// ══════════════════════════════════════════════════════════════
+let isDark = localStorage.getItem('theme') !== 'light';
+function applyTheme(){
+  if(isDark){ document.body.classList.remove('light'); document.getElementById('theme-btn').textContent='☀️ Claro'; }
+  else { document.body.classList.add('light'); document.getElementById('theme-btn').textContent='🌙 Oscuro'; }
+  localStorage.setItem('theme', isDark?'dark':'light');
+}
+function toggleTheme(){ isDark=!isDark; applyTheme(); }
+
+// ══════════════════════════════════════════════════════════════
+// GLOBAL SEARCH
+// ══════════════════════════════════════════════════════════════
+function openSearch(){
+  document.getElementById('searchOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('global-search-input').focus(),80);
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').classList.remove('open');
+  document.getElementById('global-search-input').value='';
+  document.getElementById('search-results').innerHTML='<div class="search-empty">Empieza a escribir para buscar…</div>';
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSearch(); if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();openSearch();} });
+
+function globalSearch(q){
+  const c=document.getElementById('search-results');
+  if(!q||q.length<2){ c.innerHTML='<div class="search-empty">Empieza a escribir para buscar…</div>'; return; }
+  const ql=q.toLowerCase();
+  const results=[];
+
+  const sections=[
+    {key:'citas',   icon:'🩺', color:'var(--ac)', label:'Cita',       tab:'calendario', fields:['title','desc']},
+    {key:'eventos', icon:'📌', color:'var(--ao)', label:'Evento',     tab:'calendario', fields:['title','desc']},
+    {key:'trabajo', icon:'💼', color:'var(--aw)', label:'Tarea',      tab:'trabajo',    fields:['title','desc']},
+    {key:'reservas',icon:'🍽️', color:'var(--aw)', label:'Reserva',    tab:'trabajo',    fields:['client','notes','menuName']},
+    {key:'pedidos', icon:'📦', color:'var(--aw)', label:'Pedido',     tab:'trabajo',    fields:['supplier','notes']},
+    {key:'finanzas',icon:'💶', color:'var(--af)', label:'Finanzas',   tab:'finanzas',   fields:['title','desc']},
+    {key:'ahorros', icon:'🏦', color:'var(--af)', label:'Ahorro',     tab:'finanzas',   fields:['title','desc']},
+    {key:'pasatiempo',icon:'🎨',color:'var(--ah)',label:'Pasatiempo', tab:'pasatiempo', fields:['title','desc']},
+    {key:'gimnasia',icon:'🏋️', color:'var(--ag)', label:'Entreno',    tab:'gimnasia',   fields:['title','desc']},
+    {key:'objetivos',icon:'🎯',color:'var(--ao)', label:'Objetivo',   tab:'objetivos',  fields:['title','desc']},
+    {key:'cumples', icon:'🎂', color:'#f4553a',   label:'Cumpleaños', tab:'calendario', fields:['name']},
+  ];
+
+  sections.forEach(sec=>{
+    const arr=S[sec.key]||[];
+    arr.forEach(item=>{
+      const hay=sec.fields.map(f=>String(item[f]||'')).join(' ').toLowerCase();
+      if(hay.includes(ql)){
+        const title=item.title||item.client||item.supplier||item.name||'—';
+        const meta=item.date?fmtDate(item.date):item.deadline?fmtDate(item.deadline):'';
+        results.push({...sec, title, meta, item});
+      }
+    });
+  });
+
+  if(!results.length){ c.innerHTML='<div class="search-empty">Sin resultados para "<b>'+esc(q)+'</b>"</div>'; return; }
+
+  c.innerHTML=results.slice(0,30).map(r=>`
+    <div class="search-result-item" onclick="goToResult('${r.tab}','${r.key}')">
+      <div class="sr-icon" style="background:${r.color}22">${r.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div class="sr-title">${esc(r.title)}</div>
+        <div class="sr-meta">${r.meta}</div>
+      </div>
+      <span class="sr-badge" style="background:${r.color}22;color:${r.color}">${r.label}</span>
+    </div>`).join('');
+}
+
+function goToResult(tab, key){
+  closeSearch();
+  const btn=document.querySelector(`[data-tab="${tab}"]`);
+  if(btn) switchTab(tab,btn);
+  // navigate to correct subtab if needed
+  if(key==='reservas') setTimeout(()=>{const b=document.querySelector('#panel-trabajo .stab:nth-child(2)');if(b)switchWorkTab('reservas',b);},50);
+  else if(key==='pedidos') setTimeout(()=>{const b=document.querySelector('#panel-trabajo .stab:nth-child(3)');if(b)switchWorkTab('pedidos',b);},50);
+  else if(key==='ahorros') setTimeout(()=>{const b=document.querySelector('#panel-finanzas .stab:nth-child(2)');if(b)switchFinTab('ahorros',b);},50);
+  else if(key==='cumples') setTimeout(()=>{const b=document.querySelector('#panel-calendario .stab:nth-child(3)');if(b)switchCalTab('cumple',b);},50);
+}
+
+// ══════════════════════════════════════════════════════════════
+// DRAG & DROP
+// ══════════════════════════════════════════════════════════════
+let dragIdx=null, dragList=null;
+function dragStart(e){
+  dragIdx=parseInt(e.currentTarget.dataset.idx);
+  dragList=e.currentTarget.dataset.list;
+  e.dataTransfer.effectAllowed='move';
+  setTimeout(()=>e.currentTarget.classList.add('drag-over'),0);
+}
+function dragOver(e){
+  e.preventDefault(); e.dataTransfer.dropEffect='move';
+  e.currentTarget.classList.add('drag-over');
+}
+function dragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+function dragDrop(e, list){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const toIdx=parseInt(e.currentTarget.dataset.idx);
+  if(dragIdx===null||dragIdx===toIdx||dragList!==list) return;
+  const arr=S[list];
+  const [moved]=arr.splice(dragIdx,1);
+  arr.splice(toIdx,0,moved);
+  dragIdx=null; dragList=null;
+  save();
+  if(list==='trabajo') renderTrabajo();
+  else if(list==='objetivos') renderObjetivos();
+}
+
+// ══════════════════════════════════════════════════════════════
+// EXPORT PDF
+// ══════════════════════════════════════════════════════════════
+function exportPDF(){
+  const MNAMES_FULL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const today=new Date();
+  const dateStr=`${today.getDate()} de ${MNAMES_FULL[today.getMonth()]} de ${today.getFullYear()}`;
+
+  const cobros=S.finanzas.filter(f=>f.type==='cobro'&&f.status==='done').reduce((a,f)=>a+f.amount,0);
+  const pagos=S.finanzas.filter(f=>f.type==='pago'&&f.status==='done').reduce((a,f)=>a+f.amount,0);
+  const bal=cobros-pagos;
+  const totalAhorrado=S.ahorros.reduce((a,x)=>a+x.saved,0);
+  const totalObjetivoAhorro=S.ahorros.reduce((a,x)=>a+x.target,0);
+
+  const pendTareas=S.trabajo.filter(t=>t.status!=='done').length;
+  const todayRes=S.reservas.filter(r=>r.date===TISO&&r.status!=='cancelled');
+  const nextCitas=[...S.citas,...S.eventos].filter(e=>e.date>=TISO).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+  const activeObjs=S.objetivos.filter(o=>o.progress<100);
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Mi Agenda — Resumen ${dateStr}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@400;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:#fff;color:#1a1825;padding:40px;max-width:900px;margin:0 auto;}
+  h1{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:4px;}
+  h1 em{font-style:italic;color:#6c8fff;}
+  .subtitle{font-size:.9rem;color:#888;margin-bottom:32px;}
+  h2{font-family:'Playfair Display',serif;font-size:1.2rem;margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid #eee;}
+  h2 span{font-style:italic;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px;}
+  .stat{background:#f8f7fc;border-radius:10px;padding:14px;text-align:center;}
+  .stat-v{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;}
+  .stat-l{font-size:.72rem;color:#888;margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+  .green{color:#2a9d5c;}.red{color:#c0392b;}.blue{color:#6c8fff;}.purple{color:#b47cf7;}
+  table{width:100%;border-collapse:collapse;margin-bottom:6px;}
+  th{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.5px;padding:7px 10px;border-bottom:2px solid #eee;text-align:left;}
+  td{padding:8px 10px;border-bottom:1px solid #f0eef8;font-size:.85rem;}
+  tr:last-child td{border-bottom:none;}
+  .badge{padding:2px 8px;border-radius:50px;font-size:.7rem;font-weight:600;}
+  .prog-bar{height:6px;background:#eee;border-radius:50px;overflow:hidden;margin-top:4px;}
+  .prog-fill{height:100%;border-radius:50px;background:#b47cf7;}
+  .footer{margin-top:40px;padding-top:16px;border-top:1px solid #eee;font-size:.78rem;color:#aaa;text-align:center;}
+  @media print{body{padding:20px;}}
+</style></head><body>
+<h1>Mi <em>Agenda</em> Personal</h1>
+<div class="subtitle">Resumen generado el ${dateStr}</div>
+
+<h2>📊 <span>Resumen financiero</span></h2>
+<div class="stats">
+  <div class="stat"><div class="stat-v green">€${cobros.toLocaleString('es')}</div><div class="stat-l">Cobros</div></div>
+  <div class="stat"><div class="stat-v red">€${pagos.toLocaleString('es')}</div><div class="stat-l">Pagos</div></div>
+  <div class="stat"><div class="stat-v ${bal>=0?'green':'red'}">${bal>=0?'+':''}€${Math.abs(bal).toLocaleString('es')}</div><div class="stat-l">Balance</div></div>
+  <div class="stat"><div class="stat-v blue">€${totalAhorrado.toLocaleString('es')}</div><div class="stat-l">Ahorrado</div></div>
+</div>
+
+<h2>💼 <span>Tareas pendientes (${pendTareas})</span></h2>
+<table><thead><tr><th>Tarea</th><th>Fecha</th><th>Estado</th></tr></thead><tbody>
+${S.trabajo.filter(t=>t.status!=='done').map(t=>`<tr><td>${esc(t.title)}</td><td>${fmtDate(t.date)}</td><td><span class="badge" style="background:${t.status==='urgent'?'#fde':'#e8f0fe'};color:${t.status==='urgent'?'#c0392b':'#6c8fff'}">${t.status==='urgent'?'Urgente':'Pendiente'}</span></td></tr>`).join('')}
+</tbody></table>
+
+<h2>🍽️ <span>Reservas de hoy (${todayRes.length})</span></h2>
+${todayRes.length?`<table><thead><tr><th>Mesa</th><th>Cliente</th><th>Hora</th><th>Pax</th><th>Menú</th></tr></thead><tbody>
+${todayRes.sort((a,b)=>a.time.localeCompare(b.time)).map(r=>`<tr><td><b>${r.table}</b></td><td>${esc(r.client)}</td><td>${r.time}</td><td>${r.pax}</td><td style="font-size:.78rem">${esc(r.menuName||'—')}</td></tr>`).join('')}
+</tbody></table>`:'<p style="color:#888;font-size:.85rem">Sin reservas hoy.</p>'}
+
+<h2>📅 <span>Próximas citas</span></h2>
+${nextCitas.length?`<table><thead><tr><th>Cita / Evento</th><th>Fecha</th><th>Hora</th></tr></thead><tbody>
+${nextCitas.map(c=>`<tr><td>${esc(c.title)}</td><td>${fmtDate(c.date)}</td><td>${c.time||'—'}</td></tr>`).join('')}
+</tbody></table>`:'<p style="color:#888;font-size:.85rem">Sin citas próximas.</p>'}
+
+<h2>🎯 <span>Objetivos en curso</span></h2>
+${activeObjs.length?`<table><thead><tr><th>Objetivo</th><th>Progreso</th><th>Límite</th></tr></thead><tbody>
+${activeObjs.map(o=>`<tr><td>${esc(o.title)}</td><td><div style="font-weight:600">${o.progress}%</div><div class="prog-bar"><div class="prog-fill" style="width:${o.progress}%"></div></div></td><td>${fmtDate(o.deadline)}</td></tr>`).join('')}
+</tbody></table>`:'<p style="color:#888;font-size:.85rem">Sin objetivos activos.</p>'}
+
+<h2>🏦 <span>Ahorros</span></h2>
+${S.ahorros.length?`<table><thead><tr><th>Objetivo</th><th>Ahorrado</th><th>Meta</th><th>%</th></tr></thead><tbody>
+${S.ahorros.map(a=>`<tr><td>${esc(a.title)}</td><td style="color:#2a9d5c;font-weight:600">€${a.saved.toLocaleString('es')}</td><td>€${a.target.toLocaleString('es')}</td><td>${Math.round(a.saved/a.target*100)}%</td></tr>`).join('')}
+</tbody></table>`:'<p style="color:#888;font-size:.85rem">Sin objetivos de ahorro.</p>'}
+
+<div class="footer">Mi Agenda Personal · Generado el ${dateStr}</div>
+</body></html>`;
+
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const win=window.open(url,'_blank');
+  if(win){
+    win.onload=()=>{ setTimeout(()=>{ win.print(); },400); };
+  }
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
+  showToast('📄 PDF abierto — usa Guardar como PDF en el diálogo de impresión');
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// GLUCOSA
+// ══════════════════════════════════════════════════════════════
+let glucDate = TISO;
+
+function glucAlert(v){
+  if(v<70)  return {cls:'low',     label:'⚠️ Hipo',      icon:'🔴'};
+  if(v<=100) return {cls:'ok',     label:'✓ Normal',     icon:'🟢'};
+  if(v<=140) return {cls:'ok',     label:'✓ Normal',     icon:'🟢'};
+  if(v<=180) return {cls:'high',   label:'↑ Elevada',    icon:'🟡'};
+  return            {cls:'very-high',label:'⚠️ Hiper',   icon:'🔴'};
+}
+
+function glucValColor(v){
+  if(v<70)   return 'var(--ag)';
+  if(v<=140) return '#4ecb71';
+  if(v<=180) return '#f4a553';
+  return 'var(--ag)';
+}
+
+function glucPrevDay(){
+  const d=new Date(glucDate+'T12:00:00'); d.setDate(d.getDate()-1);
+  glucDate=d.toISOString().split('T')[0];
+  document.getElementById('gluc-date').value=glucDate;
+  renderGlucosa();
+}
+function glucNextDay(){
+  const d=new Date(glucDate+'T12:00:00'); d.setDate(d.getDate()+1);
+  glucDate=d.toISOString().split('T')[0];
+  document.getElementById('gluc-date').value=glucDate;
+  renderGlucosa();
+}
+function glucToday(){
+  glucDate=TISO;
+  document.getElementById('gluc-date').value=TISO;
+  renderGlucosa();
+}
+
+function renderGlucosa(){
+  if(!S.glucosa) S.glucosa=[];
+  const selDate=document.getElementById('gluc-date')?.value||TISO;
+  glucDate=selDate;
+
+  // date label
+  const[y,m,d]=selDate.split('-');
+  const dow=new Date(parseInt(y),parseInt(m)-1,parseInt(d)).getDay();
+  const lbl=document.getElementById('gluc-date-label');
+  if(lbl) lbl.textContent=`${DNAMES[dow]}, ${parseInt(d)} de ${MNAMES[parseInt(m)-1]} ${y}`;
+
+  const dayTomas=S.glucosa.filter(g=>g.date===selDate).sort((a,b)=>a.time.localeCompare(b.time));
+
+  // Stats
+  if(dayTomas.length){
+    const vals=dayTomas.map(t=>t.valor);
+    const media=Math.round(vals.reduce((a,v)=>a+v,0)/vals.length);
+    const min=Math.min(...vals); const max=Math.max(...vals);
+    document.getElementById('gluc-media').textContent=media+' mg/dL';
+    document.getElementById('gluc-media').className='gluc-stat-val '+glucAlert(media).cls.replace('very-high','high');
+    document.getElementById('gluc-min').textContent=min+' mg/dL';
+    document.getElementById('gluc-max').textContent=max+' mg/dL';
+    document.getElementById('gluc-tomas').textContent=dayTomas.length;
+  } else {
+    document.getElementById('gluc-media').textContent='—';
+    document.getElementById('gluc-min').textContent='—';
+    document.getElementById('gluc-max').textContent='—';
+    document.getElementById('gluc-tomas').textContent='0';
+  }
+
+  // Table
+  const tw=document.getElementById('gluc-table-wrap');
+  if(!dayTomas.length){
+    tw.innerHTML='<div class="gluc-empty">Sin tomas registradas para este día.<br><span style="font-size:.8rem">Pulsa <b>+ Registrar toma</b> para añadir.</span></div>';
+  } else {
+    tw.innerHTML=`<table class="gluc-table">
+      <thead><tr>
+        <th>Hora</th><th>Valor</th><th>Estado</th><th>Momento</th><th>Medicación</th><th>Notas</th><th></th>
+      </tr></thead>
+      <tbody>
+      ${dayTomas.map(t=>{
+        const al=glucAlert(t.valor);
+        return`<tr>
+          <td style="font-weight:600;color:var(--soft)">${t.time}</td>
+          <td><span class="gluc-val" style="color:${glucValColor(t.valor)}">${t.valor}</span><span style="font-size:.72rem;color:var(--muted)"> mg/dL</span></td>
+          <td><span class="gluc-alert ${al.cls}">${al.icon} ${al.label}</span></td>
+          <td><span class="gluc-momento">${esc(t.momento)}</span></td>
+          <td><span class="gluc-med">${esc(t.medicacion)||'—'}</span></td>
+          <td style="font-size:.8rem;color:var(--muted);max-width:140px">${esc(t.notas)||'—'}</td>
+          <td>
+            <div style="display:flex;gap:5px">
+              <button class="btn-sm" onclick="editItem('glucosa',${t.id})">✎</button>
+              <button class="btn-sm d" onclick="delItem('glucosa',${t.id})">✕</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  // Weekly summary (last 7 days)
+  const ww=document.getElementById('gluc-week-wrap');
+  const days7=[];
+  for(let i=6;i>=0;i--){
+    const dd=new Date(selDate+'T12:00:00'); dd.setDate(dd.getDate()-i);
+    days7.push(dd.toISOString().split('T')[0]);
+  }
+  const weekRows=days7.map(iso=>{
+    const tomas=S.glucosa.filter(g=>g.date===iso);
+    if(!tomas.length) return null;
+    const vals=tomas.map(t=>t.valor);
+    const media=Math.round(vals.reduce((a,v)=>a+v,0)/vals.length);
+    const min=Math.min(...vals); const max=Math.max(...vals);
+    const [yy,mm,dd2]=iso.split('-');
+    const isT=iso===TISO;
+    const al=glucAlert(media);
+    return{iso,media,min,max,tomas:tomas.length,label:`${parseInt(dd2)}/${parseInt(mm)}`,isT,al};
+  }).filter(Boolean);
+
+  if(!weekRows.length){ ww.innerHTML=''; return; }
+
+  ww.innerHTML=`
+    <div style="font-size:.78rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Últimos 7 días con registros</div>
+    <table class="gluc-table">
+      <thead><tr><th>Día</th><th>Tomas</th><th>Media</th><th>Mínima</th><th>Máxima</th><th>Estado</th></tr></thead>
+      <tbody>
+        ${weekRows.map(r=>`<tr style="${r.isT?'background:var(--surface2)':''}">
+          <td style="font-weight:${r.isT?700:400};color:${r.isT?'var(--ac)':'var(--soft)'}">${r.label}${r.isT?' <span style="font-size:.68rem;background:var(--ac);color:#000;padding:1px 6px;border-radius:50px;margin-left:4px">HOY</span>':''}</td>
+          <td style="color:var(--muted)">${r.tomas}</td>
+          <td><span style="font-family:'Playfair Display',serif;font-weight:700;color:${glucValColor(r.media)}">${r.media}</span><span style="font-size:.7rem;color:var(--muted)"> mg/dL</span></td>
+          <td style="color:#4ecb71">${r.min}</td>
+          <td style="color:#f4a553">${r.max}</td>
+          <td><span class="gluc-alert ${r.al.cls}">${r.al.icon} ${r.al.label}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
+if(!S.escandallos) S.escandallos=[];
+if(!S.glucosa) S.glucosa=[];
+isDark = localStorage.getItem('theme') !== 'light';
+applyTheme();
 renderCalendar();
+// set glucosa date input
+setTimeout(()=>{ const gd=document.getElementById('gluc-date'); if(gd) gd.value=TISO; },100);
 </script>
+<button id="pdf-fab" onclick="exportPDF()">📄 Exportar PDF</button>
 </body>
 </html>
