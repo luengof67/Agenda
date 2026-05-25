@@ -424,6 +424,14 @@ body.light .cev-card{background:#fff;}
 .od-stats{display:flex;gap:16px;padding:12px 20px;border-top:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;}
 .od-stat-item{font-size:.78rem;color:var(--muted);}
 .od-stat-item b{color:var(--text);}
+
+/* ── BACKUP BAR ── */
+.backup-bar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.backup-bar span{font-size:.75rem;color:var(--muted);margin-right:4px;}
+.btn-backup{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--soft);font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.btn-backup:hover{border-color:var(--aw);color:var(--aw);}
+.btn-backup.imp:hover{border-color:var(--af);color:var(--af);}
+#backup-date{font-size:.72rem;color:var(--muted);margin-left:auto;}
 </style>
 </head>
 <body>
@@ -450,6 +458,14 @@ body.light .cev-card{background:#fff;}
     <button id="notif-btn" onclick="toggleNotifications()">🔔 Notificaciones</button>
   </div>
 </header>
+
+<div class="backup-bar">
+  <span>💾 Datos:</span>
+  <button class="btn-backup" onclick="exportJSON()">⬇️ Exportar copia</button>
+  <button class="btn-backup imp" onclick="document.getElementById('import-file').click()">⬆️ Importar copia</button>
+  <input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(event)">
+  <span id="backup-date"></span>
+</div>
 
 <div class="tabs-bar">
   <button class="tab-btn active" data-tab="calendario" onclick="switchTab('calendario',this)"><span>📅</span> Calendario</button>
@@ -3099,6 +3115,79 @@ function exportPDFOrden(){
 
   pdfOpen('Orden del día — Servicio', body);
 }
+
+// ══════════════════════════════════════════════════════════════
+// EXPORTAR / IMPORTAR JSON
+// ══════════════════════════════════════════════════════════════
+function exportJSON(){
+  const data = {
+    _version: 1,
+    _exported: new Date().toISOString(),
+    _device: navigator.userAgent.slice(0,50),
+    ...S
+  };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = `mi-agenda-backup-${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Copia exportada: mi-agenda-backup-'+date+'.json');
+  updateBackupDate();
+}
+
+function importJSON(event){
+  const file = event.target.files[0];
+  if(!file){ return; }
+  if(!file.name.endsWith('.json')){
+    showToast('❌ Selecciona un archivo .json válido'); return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const data = JSON.parse(e.target.result);
+      // Validate it's an agenda backup
+      const keys = ['citas','eventos','reservas','trabajo','finanzas'];
+      const valid = keys.some(k => Array.isArray(data[k]));
+      if(!valid) throw new Error('Formato no reconocido');
+
+      if(!confirm('¿Importar esta copia? Se reemplazarán los datos actuales de este dispositivo.')) return;
+
+      // Merge: keep _meta fields out of S
+      const {_version, _exported, _device, ...rest} = data;
+      // Only import known sections
+      const sections = ['citas','eventos','cumples','trabajo','reservas','pedidos',
+                        'finanzas','ahorros','pasatiempo','gimnasia','glucosa','objetivos','escandallos'];
+      sections.forEach(sec=>{
+        if(Array.isArray(rest[sec])) S[sec] = rest[sec];
+      });
+      save();
+      render(curTab);
+      renderCalendar();
+
+      const exportDate = _exported ? new Date(_exported).toLocaleString('es') : 'desconocida';
+      showToast('✅ Datos importados correctamente (copia del '+exportDate+')');
+      updateBackupDate();
+    } catch(err){
+      showToast('❌ Error al importar: '+err.message);
+    }
+    // Reset file input so same file can be imported again
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function updateBackupDate(){
+  const el = document.getElementById('backup-date');
+  if(!el) return;
+  const total = Object.values(S).reduce((a,v)=>a+(Array.isArray(v)?v.length:0),0);
+  el.textContent = `${total} registros en este dispositivo`;
+}
 // ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
@@ -3106,6 +3195,7 @@ function exportPDFOrden(){
 isDark = localStorage.getItem('theme') !== 'light';
 applyTheme();
 renderCalendar();
+updateBackupDate();
 setTimeout(()=>{
   const gd=document.getElementById('gluc-date'); if(gd) gd.value=TISO;
   const od=document.getElementById('od-from'); if(od) od.value=TISO;
