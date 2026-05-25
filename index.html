@@ -379,6 +379,51 @@ body.light .cev-card{background:#fff;}
 .gluc-date-nav button:hover{border-color:var(--ag);color:var(--ag);}
 .gluc-empty{text-align:center;padding:40px;color:var(--muted);font-size:.88rem;}
 @media(max-width:640px){.gluc-stats{grid-template-columns:1fr 1fr;}}
+
+/* ── AUTOCOMPLETE ── */
+.ac-wrap{position:relative;}
+.ac-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--aw);border-top:none;border-radius:0 0 10px 10px;z-index:500;max-height:180px;overflow-y:auto;display:none;box-shadow:0 8px 24px #0004;}
+.ac-dropdown.open{display:block;}
+.ac-item{padding:9px 14px;font-size:.85rem;cursor:pointer;color:var(--text);transition:background .15s;display:flex;align-items:center;gap:8px;}
+.ac-item:hover,.ac-item.selected{background:var(--surface2);}
+.ac-item b{color:var(--aw);}
+.ac-item .ac-sub{font-size:.74rem;color:var(--muted);margin-left:auto;}
+.ac-dropdown::-webkit-scrollbar{width:3px;}
+.ac-dropdown::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* ── ORDEN DEL DÍA ── */
+.od-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.od-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.od-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;}
+.od-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.od-controls input[type=date]{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;}
+.od-controls input[type=date]:focus{border-color:var(--aw);}
+.od-controls input[type=number]{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;width:70px;text-align:center;}
+.od-controls label{font-size:.78rem;color:var(--muted);}
+.od-day-col{border-right:1px solid var(--border);min-width:200px;flex:1;}
+.od-day-col:last-child{border-right:none;}
+.od-day-head{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.od-day-name{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);}
+.od-day-num{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;}
+.od-day-head.today-col{background:#0e2929;}
+.od-day-head.today-col .od-day-num{color:var(--ac);}
+.od-day-head.today-col .od-day-name{color:var(--ac);}
+.od-body{padding:10px 0;}
+.od-empty{padding:14px;font-size:.78rem;color:var(--muted);text-align:center;}
+.od-res-item{padding:9px 14px;border-bottom:1px solid var(--border)22;transition:background .15s;}
+.od-res-item:hover{background:var(--surface2);}
+.od-res-item:last-child{border-bottom:none;}
+.od-res-time{font-size:.72rem;color:var(--muted);font-weight:700;letter-spacing:.4px;margin-bottom:2px;}
+.od-res-client{font-size:.86rem;font-weight:600;line-height:1.3;}
+.od-res-detail{font-size:.74rem;color:var(--muted);margin-top:2px;}
+.od-res-menu{font-size:.72rem;color:var(--aw);margin-top:3px;}
+.od-status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.od-grid{display:flex;overflow-x:auto;}
+.od-grid::-webkit-scrollbar{height:4px;}
+.od-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.od-stats{display:flex;gap:16px;padding:12px 20px;border-top:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;}
+.od-stat-item{font-size:.78rem;color:var(--muted);}
+.od-stat-item b{color:var(--text);}
 </style>
 </head>
 <body>
@@ -426,6 +471,7 @@ body.light .cev-card{background:#fff;}
       <button class="btn-add" onclick="openModal('cita')" style="background:var(--ac)">+ Cita</button>
       <button class="btn-add" onclick="openModal('evento')" style="background:var(--ao)">+ Evento</button>
       <button class="btn-add" onclick="exportICS()" style="background:#555;gap:6px">📅 Exportar .ics</button>
+      <button class="btn-add" onclick="exportPDFCalendario()" style="background:#444;font-size:.78rem;padding:8px 14px">📄 PDF</button>
     </div>
   </div>
 
@@ -492,13 +538,14 @@ body.light .cev-card{background:#fff;}
 <div id="panel-trabajo" class="panel">
   <div class="ph">
     <div class="pt">Trabajo <em style="color:var(--aw)">& Servicio</em></div>
-    <button class="btn-add" id="trabajo-add-btn" onclick="onTrabajoAdd()" style="background:var(--aw)">+ Nueva tarea</button>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn-add" id="trabajo-add-btn" onclick="onTrabajoAdd()" style="background:var(--aw)">+ Nueva tarea</button><button class="btn-add" onclick="exportPDFTrabajo()" style="background:#444;font-size:.78rem;padding:8px 14px">📄 PDF</button></div>
   </div>
   <div class="subtabs">
     <button class="stab active" onclick="switchWorkTab('tareas',this)">📋 Tareas</button>
     <button class="stab" onclick="switchWorkTab('reservas',this)">🍽️ Reservas</button>
     <button class="stab" onclick="switchWorkTab('pedidos',this)">📦 Pedidos</button>
     <button class="stab" onclick="switchWorkTab('escandallo',this)">🧮 Escandallo</button>
+    <button class="stab" onclick="switchWorkTab('orden',this)">📅 Orden del día</button>
     <button class="stab" onclick="switchWorkTab('impresion',this)">🖨️ Hoja servicio</button>
   </div>
   <div class="subpanel active" id="sub-tareas"><div class="grid" id="list-trabajo"></div></div>
@@ -527,6 +574,24 @@ body.light .cev-card{background:#fff;}
       <button class="fbtn" data-pf="partial" onclick="setPF('partial',this)">Parciales</button>
     </div>
     <div class="grid" id="list-pedidos"></div>
+  </div>
+
+  <!-- ORDEN DEL DÍA -->
+  <div class="subpanel" id="sub-orden">
+    <div class="od-panel">
+      <div class="od-header">
+        <div class="od-title">Orden del día por servicio</div>
+        <div class="od-controls">
+          <label>Desde</label>
+          <input type="date" id="od-from" onchange="renderOrdenDia()">
+          <label>Días</label>
+          <input type="number" id="od-days" min="1" max="14" value="3" onchange="renderOrdenDia()">
+          <button class="btn-add" onclick="exportPDFOrden()" style="background:#444;font-size:.78rem;padding:8px 14px">📄 PDF</button>
+        </div>
+      </div>
+      <div class="od-grid" id="od-grid"></div>
+      <div class="od-stats" id="od-stats"></div>
+    </div>
   </div>
 
   <!-- ESCANDALLO -->
@@ -580,7 +645,7 @@ body.light .cev-card{background:#fff;}
 <div id="panel-finanzas" class="panel">
   <div class="ph">
     <div class="pt">Finanzas <em style="color:var(--af)">Personales</em></div>
-    <button class="btn-add" id="fin-add-btn" onclick="onFinAdd()" style="background:var(--af)">+ Añadir</button>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn-add" id="fin-add-btn" onclick="onFinAdd()" style="background:var(--af)">+ Añadir</button><button class="btn-add" onclick="exportPDFFinanzas()" style="background:#444;font-size:.78rem;padding:8px 14px">📄 PDF</button></div>
   </div>
   <div class="subtabs">
     <button class="stab active" onclick="switchFinTab('movimientos',this)">💶 Movimientos</button>
@@ -616,7 +681,7 @@ body.light .cev-card{background:#fff;}
 <div id="panel-pasatiempo" class="panel">
   <div class="ph">
     <div class="pt">Pasatiempos <em style="color:var(--ah)">& Ocio</em></div>
-    <button class="btn-add" onclick="openModal('pasatiempo')" style="background:var(--ah)">+ Añadir</button>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn-add" onclick="openModal('pasatiempo')" style="background:var(--ah)">+ Añadir</button><button class="btn-add" onclick="exportPDFPasatiempo()" style="background:#444;font-size:.78rem;padding:8px 14px">📄 PDF</button></div>
   </div>
   <div class="grid" id="list-pasatiempo"></div>
 </div>
@@ -625,7 +690,7 @@ body.light .cev-card{background:#fff;}
 <div id="panel-gimnasia" class="panel">
   <div class="ph">
     <div class="pt">Gimnasia <em style="color:var(--ag)">& Salud</em></div>
-    <button class="btn-add" onclick="openModal('gimnasia')" style="background:var(--ag)">+ Añadir</button>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn-add" onclick="openModal('gimnasia')" style="background:var(--ag)">+ Añadir</button><button class="btn-add" onclick="exportPDFGimnasia()" style="background:#444;font-size:.78rem;padding:8px 14px">📄 PDF</button></div>
   </div>
   <div class="gym-week" id="gym-week"></div>
   <div class="grid" id="list-gimnasia"></div>
@@ -635,7 +700,7 @@ body.light .cev-card{background:#fff;}
 <div id="panel-objetivos" class="panel">
   <div class="ph">
     <div class="pt">Mis <em style="color:var(--ao)">Objetivos</em></div>
-    <button class="btn-add" onclick="openModal('objetivos')" style="background:var(--ao)">+ Nuevo</button>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn-add" onclick="openModal('objetivos')" style="background:var(--ao)">+ Nuevo</button><button class="btn-add" onclick="exportPDFObjetivos()" style="background:#444;font-size:.78rem;padding:8px 14px">📄 PDF</button></div>
   </div>
   <div id="list-objetivos"></div>
 </div>
@@ -644,7 +709,7 @@ body.light .cev-card{background:#fff;}
 <div id="panel-glucosa" class="panel">
   <div class="ph">
     <div class="pt">Glucosa <em style="color:var(--ag)">& Control</em></div>
-    <button class="btn-add" onclick="openModal('glucosa')" style="background:var(--ag)">+ Registrar toma</button>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn-add" onclick="openModal('glucosa')" style="background:var(--ag)">+ Registrar toma</button><button class="btn-add" onclick="exportPDFGlucosa()" style="background:#444;font-size:.78rem;padding:8px 14px">📄 PDF</button></div>
   </div>
 
   <!-- Rango de referencia visual -->
@@ -704,75 +769,42 @@ body.light .cev-card{background:#fff;}
 // ══════════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════════
-const KEY = 'agenda_v15';
+// Clave fija — nunca cambia para no perder datos del usuario
+const KEY = 'mi_agenda_data';
 const TODAY = new Date();
 const TISO  = TODAY.toISOString().split('T')[0];
 
-let S = JSON.parse(localStorage.getItem(KEY)||'null') || {
-  citas:[
-    {id:1,title:'Revisión médica',date:'2026-05-28',time:'10:30',notif:30,desc:'Centro de salud Alameda.',color:'cita'},
-    {id:2,title:'Reunión con gestor',date:'2026-06-03',time:'17:00',notif:60,desc:'Repaso cuentas trimestrales.',color:'cita'}
-  ],
-  eventos:[
-    {id:1,title:'Feria Gastronómica Madrid',date:'2026-06-14',time:'10:00',desc:'Stand B-22, pabellón 4.',color:'evento'}
-  ],
-  cumples:[
-    {id:1,name:'Ana García',date:'03-15',emoji:'🎂'},
-    {id:2,name:'Carlos López',date:'07-03',emoji:'🎂'},
-    {id:3,name:'María Ruiz',date:'12-28',emoji:'🎂'}
-  ],
-  trabajo:[
-    {id:1,title:'Reunión con proveedor',date:'2026-05-26',status:'pending',desc:'Revisar propuesta Q3.'},
-    {id:2,title:'Informe mensual costos',date:'2026-05-30',status:'progress',desc:'Actualizar escandallo.'},
-    {id:3,title:'Formación equipo sala',date:'2026-06-02',status:'done',desc:'Sesión servicio y protocolo.'}
-  ],
-  reservas:[
-    {id:1,client:'Familia García',table:4,pax:6,date:'2026-05-25',time:'14:00',status:'confirmed',phone:'612 345 678',notes:'Alergia al gluten (1 persona)',menuName:'Menú Degustación Primavera',menu:[{course:'Aperitivo',dish:'Gazpacho de remolacha'},{course:'Principal',dish:'Lubina al vapor con emulsión de algas'},{course:'Postre',dish:'Torrija caramelizada'}]},
-    {id:2,client:'Sr. Morales (empresa)',table:2,pax:4,date:'2026-05-25',time:'14:30',status:'confirmed',phone:'699 001 122',notes:'Mesa de negocios',menuName:'Menú Ejecutivo',menu:[{course:'Entrante',dish:'Tabla de ibéricos'},{course:'Principal',dish:'Secreto ibérico'},{course:'Postre',dish:'Postres de temporada'}]},
-    {id:3,client:'Cumpleaños Lucía R.',table:7,pax:10,date:'2026-05-25',time:'21:00',status:'pending',phone:'655 789 000',notes:'Tarta de cumpleaños encargada',menuName:'Menú Celebración',menu:[{course:'Aperitivo',dish:'Croquetas de jamón'},{course:'Principal',dish:'Entrecot madurado'},{course:'Postre',dish:'Tarta de chocolate'}]},
-    {id:4,client:'Pareja Romero',table:1,pax:2,date:'2026-05-26',time:'21:30',status:'confirmed',phone:'611 222 333',notes:'Aniversario. Rosa en la mesa.',menuName:'Menú Romántico',menu:[{course:'Aperitivo',dish:'Ostras finas'},{course:'Pescado',dish:'Vieiras a la plancha'},{course:'Carne',dish:'Solomillo Wellington'},{course:'Postre',dish:'Coulant de chocolate'}]}
-  ],
-  pedidos:[
-    {id:1,supplier:'Carnicería Hermanos Ruiz',date:'2026-05-24',status:'received',items:[{name:'Secreto ibérico',qty:'5 kg',price:62},{name:'Carrilleras',qty:'3 kg',price:28}],notes:'Entrega puntual.'},
-    {id:2,supplier:'Pescadería Atlántico',date:'2026-05-26',status:'pending',items:[{name:'Lubina salvaje',qty:'4 kg',price:88},{name:'Vieiras',qty:'2 kg',price:54}],notes:'Confirmar hora entrega.'},
-    {id:3,supplier:'Verduras El Huerto',date:'2026-05-25',status:'partial',items:[{name:'Rúcula',qty:'1 kg',price:8},{name:'Remolacha',qty:'2 kg',price:6},{name:'Espárragos',qty:'1 kg',price:14}],notes:'Faltan espárragos, llegan mañana.'}
-  ],
-  finanzas:[
-    {id:1,title:'Nómina mayo',amount:2400,type:'cobro',date:'2026-05-28',status:'pending',desc:''},
-    {id:2,title:'Alquiler',amount:950,type:'pago',date:'2026-06-01',status:'pending',desc:''},
-    {id:3,title:'Factura proveedor',amount:320,type:'pago',date:'2026-05-25',status:'done',desc:'Carnicería Hermanos Ruiz.'},
-    {id:4,title:'Ingreso extra catering',amount:600,type:'cobro',date:'2026-05-24',status:'done',desc:'Evento corporativo 24/05.'}
-  ],
-  ahorros:[
-    {id:1,title:'Fondo de emergencia',target:5000,saved:1800,date:'2026-12-31',desc:'3 meses de gastos cubiertos.',color:'#4ecb71'},
-    {id:2,title:'Vacaciones verano',target:1500,saved:600,date:'2026-07-01',desc:'Viaje familiar.',color:'#38c9c9'},
-    {id:3,title:'Nuevo equipamiento cocina',target:3000,saved:400,date:'2027-01-01',desc:'Horno de convección y batidora profesional.',color:'#b47cf7'}
-  ],
-  pasatiempo:[
-    {id:1,title:'Fotografía gastronómica',date:'2026-05-25',status:'progress',desc:'Sesión de platos nuevos para Instagram.'},
-    {id:2,title:'Leer: "El Comensal"',date:'2026-06-10',status:'pending',desc:'Terminar los últimos 3 capítulos.'}
-  ],
-  gimnasia:[
-    {id:1,title:'Cardio + Core',date:'2026-05-24',done:true,duration:'45 min',desc:'Bici 20 min + plancha.'},
-    {id:2,title:'Tren superior',date:'2026-05-26',done:false,duration:'60 min',desc:'Pecho, espalda, bíceps.'},
-    {id:3,title:'Piernas',date:'2026-05-28',done:false,duration:'50 min',desc:'Sentadillas, prensa, femoral.'}
-  ],
-  glucosa:[
-    {id:1,date:'2026-05-25',time:'08:00',valor:92,momento:'Ayunas',medicacion:'Metformina 500mg',notas:''},
-    {id:2,date:'2026-05-25',time:'10:30',valor:138,momento:'2h post-desayuno',medicacion:'',notas:'Desayuno abundante'},
-    {id:3,date:'2026-05-25',time:'14:00',valor:105,momento:'Antes de comida',medicacion:'',notas:''},
-    {id:4,date:'2026-05-25',time:'16:30',valor:155,momento:'2h post-comida',medicacion:'',notas:'Paella'},
-    {id:5,date:'2026-05-25',time:'21:00',valor:118,momento:'Antes de cena',medicacion:'Metformina 500mg',notas:''},
-    {id:6,date:'2026-05-24',time:'08:00',valor:98,momento:'Ayunas',medicacion:'Metformina 500mg',notas:''},
-    {id:7,date:'2026-05-24',time:'14:00',valor:112,momento:'Antes de comida',medicacion:'',notas:''},
-    {id:8,date:'2026-05-24',time:'16:30',valor:162,momento:'2h post-comida',medicacion:'',notas:''}
-  ],
-  objetivos:[
-    {id:1,title:'Abrir sección menús degustación',deadline:'2026-09-01',progress:30,desc:'Diseñar 3 menús temáticos estacionales.'},
-    {id:2,title:'Certificación gestión hostelera',deadline:'2026-12-31',progress:15,desc:'Curso online 60 horas.'},
-    {id:3,title:'Perder 5 kg',deadline:'2026-08-01',progress:40,desc:'Dieta y entrenos regulares.'}
-  ]
+// Migración: recupera datos de versiones anteriores si existen
+function migrateOldData(){
+  const oldKeys=['agenda_v17','agenda_v16','agenda_v15','agenda_v14','agenda_v13',
+                 'agenda_v12','agenda_v11','agenda_v10','agenda_v9','agenda_v8',
+                 'agenda_v7','agenda_v6','agenda_v5','agenda_v4','agenda_v3','agenda_v2'];
+  for(const k of oldKeys){
+    const old=localStorage.getItem(k);
+    if(old){
+      try{
+        const parsed=JSON.parse(old);
+        localStorage.setItem(KEY, old);
+        oldKeys.forEach(ok=>localStorage.removeItem(ok));
+        console.log('Datos migrados desde '+k);
+        return parsed;
+      }catch(e){}
+    }
+  }
+  return null;
+}
+
+// Estado vacío — sin datos de ejemplo
+const EMPTY_STATE = {
+  citas:[], eventos:[], cumples:[], trabajo:[], reservas:[],
+  pedidos:[], finanzas:[], ahorros:[], pasatiempo:[],
+  gimnasia:[], glucosa:[], objetivos:[], escandallos:[]
 };
+
+let S = JSON.parse(localStorage.getItem(KEY)||'null') || migrateOldData() || EMPTY_STATE;
+
+// Asegurar que todas las secciones existen (compatibilidad con versiones antiguas)
+Object.keys(EMPTY_STATE).forEach(k=>{ if(!S[k]) S[k]=[]; });
 
 function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
 
@@ -866,13 +898,14 @@ function switchWorkTab(sub, btn){
   btn.classList.add('active');
   document.getElementById('sub-'+sub).classList.add('active');
   const addBtn = document.getElementById('trabajo-add-btn');
-  const labels = {tareas:'+ Nueva tarea', reservas:'+ Nueva reserva', pedidos:'+ Nuevo pedido', escandallo:'+ Guardar escandallo', impresion:'🖨️ Imprimir'};
+  const labels = {tareas:'+ Nueva tarea', reservas:'+ Nueva reserva', pedidos:'+ Nuevo pedido', escandallo:'+ Guardar escandallo', orden:'📄 PDF orden', impresion:'🖨️ Imprimir'};
   addBtn.textContent = labels[sub]||'+ Añadir';
-  addBtn.onclick = sub==='escandallo'?escSave : sub==='impresion'?()=>window.print() : ()=>openModal({tareas:'trabajo',reservas:'reservas',pedidos:'pedidos'}[sub]||'trabajo');
+  addBtn.onclick = sub==='escandallo'?escSave : sub==='impresion'?()=>window.print() : sub==='orden'?exportPDFOrden : ()=>openModal({tareas:'trabajo',reservas:'reservas',pedidos:'pedidos'}[sub]||'trabajo');
   if(sub==='tareas') renderTrabajo();
   else if(sub==='reservas'){ renderReservas(); }
   else if(sub==='pedidos'){ renderPedidos(); }
   else if(sub==='escandallo'){ escInit(); }
+  else if(sub==='orden'){ renderOrdenDia(); }
   else if(sub==='impresion'){ renderPrintSheet(); }
 }
 
@@ -2230,7 +2263,7 @@ function dragDrop(e, list){
 // ══════════════════════════════════════════════════════════════
 // EXPORT PDF
 // ══════════════════════════════════════════════════════════════
-function exportPDF(){
+function exportPDFGeneral_OLD_UNUSED(){
   const MNAMES_FULL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const today=new Date();
   const dateStr=`${today.getDate()} de ${MNAMES_FULL[today.getMonth()]} de ${today.getFullYear()}`;
@@ -2563,21 +2596,524 @@ function renderWidget(){
 
   document.getElementById('widget-content').innerHTML=html;
 }
+
+// ══════════════════════════════════════════════════════════════
+// PDF HELPERS
+// ══════════════════════════════════════════════════════════════
+function pdfOpen(title, bodyHtml){
+  const MNAMES_FULL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const today=new Date();
+  const dateStr=`${today.getDate()} de ${MNAMES_FULL[today.getMonth()]} de ${today.getFullYear()}`;
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>${title}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@400;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#fff;color:#1a1825;padding:36px;max-width:920px;margin:0 auto;}
+h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;margin-bottom:3px;}
+h1 em{font-style:italic;color:#6c8fff;}
+.sub{font-size:.85rem;color:#888;margin-bottom:28px;}
+h2{font-family:'Playfair Display',serif;font-size:1.15rem;margin:24px 0 10px;padding-bottom:5px;border-bottom:2px solid #eee;}
+h2 em{font-style:italic;}
+table{width:100%;border-collapse:collapse;margin-bottom:4px;}
+th{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.5px;padding:7px 10px;border-bottom:2px solid #eee;text-align:left;}
+td{padding:8px 10px;border-bottom:1px solid #f0eef8;font-size:.84rem;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+.badge{padding:2px 8px;border-radius:50px;font-size:.68rem;font-weight:600;}
+.green{color:#2a9d5c;font-weight:700;} .red{color:#c0392b;font-weight:700;} .blue{color:#6c8fff;font-weight:700;} .orange{color:#e67e22;font-weight:700;}
+.prog-bar{height:6px;background:#eee;border-radius:50px;overflow:hidden;margin-top:4px;}
+.prog-fill{height:100%;border-radius:50px;}
+.card-row{border:1px solid #eee;border-left:4px solid #6c8fff;border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+.footer{margin-top:36px;padding-top:12px;border-top:1px solid #eee;font-size:.74rem;color:#aaa;text-align:center;}
+@media print{body{padding:16px;}@page{margin:1cm;}}
+</style></head><body>
+<h1><em>${title}</em></h1>
+<div class="sub">Exportado el ${dateStr}</div>
+${bodyHtml}
+<div class="footer">Mi Agenda Personal · ${dateStr}</div>
+</body></html>`;
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const win=window.open(url,'_blank');
+  if(win) win.onload=()=>setTimeout(()=>win.print(),350);
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
+  showToast('📄 PDF listo — guarda como PDF en el diálogo de impresión');
+}
+
+// ── PDF CALENDARIO ──
+function exportPDFCalendario(){
+  const evs=[...S.citas,...S.eventos].sort((a,b)=>a.date.localeCompare(b.date));
+  let body=`<h2>🗓 <em>Citas y eventos</em></h2>`;
+  if(evs.length){
+    body+=`<table><thead><tr><th>Título</th><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Notas</th></tr></thead><tbody>`;
+    evs.forEach(e=>{
+      const tipo=S.citas.find(c=>c.id===e.id)?'Cita':'Evento';
+      body+=`<tr><td><b>${esc(e.title)}</b></td><td>${fmtDate(e.date)}</td><td>${e.time||'—'}</td><td>${tipo}</td><td style="color:#888;font-size:.8rem">${esc(e.desc||'')}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin eventos registrados.</p>`;
+
+  body+=`<h2>🎂 <em>Cumpleaños</em></h2>`;
+  if(S.cumples.length){
+    const sorted=[...S.cumples].sort((a,b)=>a.date.localeCompare(b.date));
+    body+=`<table><thead><tr><th>Nombre</th><th>Fecha</th></tr></thead><tbody>`;
+    sorted.forEach(b=>{
+      const[mm,dd]=b.date.split('-');
+      body+=`<tr><td>${esc(b.name)}</td><td>${parseInt(dd)} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][parseInt(mm)-1]}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin cumpleaños.</p>`;
+
+  pdfOpen('Calendario & Eventos', body);
+}
+
+// ── PDF TRABAJO ──
+function exportPDFTrabajo(){
+  let body=`<h2>📋 <em>Tareas</em></h2>`;
+  if(S.trabajo.length){
+    body+=`<table><thead><tr><th>Tarea</th><th>Fecha</th><th>Estado</th><th>Descripción</th></tr></thead><tbody>`;
+    S.trabajo.forEach(t=>{
+      const col={pending:'#e67e22',progress:'#6c8fff',done:'#2a9d5c',urgent:'#c0392b'}[t.status]||'#888';
+      const lbl={pending:'Pendiente',progress:'En curso',done:'Completado',urgent:'Urgente'}[t.status]||t.status;
+      body+=`<tr><td><b>${esc(t.title)}</b></td><td>${fmtDate(t.date)}</td><td><span class="badge" style="background:${col}22;color:${col}">${lbl}</span></td><td style="color:#888;font-size:.8rem">${esc(t.desc||'')}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin tareas.</p>`;
+
+  body+=`<h2>🍽️ <em>Reservas</em></h2>`;
+  if(S.reservas.length){
+    const sorted=[...S.reservas].sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+    sorted.forEach(r=>{
+      const col={confirmed:'#2a9d5c',pending:'#e67e22',cancelled:'#c0392b'}[r.status]||'#888';
+      const lbl={confirmed:'Confirmada',pending:'Pendiente',cancelled:'Cancelada'}[r.status]||r.status;
+      body+=`<div class="card-row" style="border-left-color:${col}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <b>Mesa ${r.table} — ${esc(r.client)}</b>
+          <span class="badge" style="background:${col}22;color:${col}">${lbl}</span>
+        </div>
+        <div style="font-size:.8rem;color:#888">📅 ${fmtDate(r.date)} · 🕐 ${r.time} · 👥 ${r.pax} pax${r.phone?' · 📞 '+esc(r.phone):''}</div>
+        ${r.menuName?`<div style="font-size:.8rem;margin-top:5px">🍴 <b>${esc(r.menuName)}</b>${r.menu&&r.menu.length?' — '+r.menu.map(p=>p.course+': '+p.dish).join(' · '):''}</div>`:''}
+        ${r.notes?`<div style="font-size:.78rem;color:#888;margin-top:4px">📝 ${esc(r.notes)}</div>`:''}
+      </div>`;
+    });
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin reservas.</p>`;
+
+  body+=`<h2>📦 <em>Pedidos</em></h2>`;
+  if(S.pedidos.length){
+    body+=`<table><thead><tr><th>Proveedor</th><th>Fecha</th><th>Estado</th><th>Total</th><th>Artículos</th></tr></thead><tbody>`;
+    S.pedidos.forEach(p=>{
+      const total=p.items.reduce((a,i)=>a+(i.price||0),0);
+      const col={received:'#2a9d5c',partial:'#e67e22',pending:'#6c8fff'}[p.status]||'#888';
+      const lbl={received:'Recibido',partial:'Parcial',pending:'Enviado'}[p.status]||p.status;
+      body+=`<tr><td><b>${esc(p.supplier)}</b></td><td>${fmtDate(p.date)}</td><td><span class="badge" style="background:${col}22;color:${col}">${lbl}</span></td><td class="green">€${total.toFixed(2)}</td><td style="font-size:.78rem;color:#888">${p.items.map(i=>i.name+' ('+i.qty+')').join(', ')}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin pedidos.</p>`;
+
+  pdfOpen('Trabajo & Servicio', body);
+}
+
+// ── PDF FINANZAS ──
+function exportPDFFinanzas(){
+  const cobros=S.finanzas.filter(f=>f.type==='cobro'&&f.status==='done').reduce((a,f)=>a+f.amount,0);
+  const pagos=S.finanzas.filter(f=>f.type==='pago'&&f.status==='done').reduce((a,f)=>a+f.amount,0);
+  const bal=cobros-pagos;
+  let body=`
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.5rem;font-weight:700" class="green">€${cobros.toLocaleString('es')}</div><div style="font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Cobros</div></div>
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.5rem;font-weight:700" class="red">€${pagos.toLocaleString('es')}</div><div style="font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Pagos</div></div>
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.5rem;font-weight:700" class="${bal>=0?'green':'red'}">${bal>=0?'+':''}€${Math.abs(bal).toLocaleString('es')}</div><div style="font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Balance</div></div>
+  </div>
+  <h2>💶 <em>Movimientos</em></h2>`;
+  if(S.finanzas.length){
+    body+=`<table><thead><tr><th>Concepto</th><th>Fecha</th><th>Tipo</th><th>Importe</th><th>Estado</th></tr></thead><tbody>`;
+    [...S.finanzas].sort((a,b)=>b.date.localeCompare(a.date)).forEach(f=>{
+      body+=`<tr><td>${esc(f.title)}</td><td>${fmtDate(f.date)}</td><td>${f.type==='cobro'?'⬆️ Cobro':'⬇️ Pago'}</td><td class="${f.type==='cobro'?'green':'red'}">${f.type==='cobro'?'+':'-'}€${f.amount.toLocaleString('es')}</td><td>${f.status==='done'?'✓ Completado':'⏳ Pendiente'}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  }
+  body+=`<h2>🏦 <em>Ahorros</em></h2>`;
+  if(S.ahorros.length){
+    body+=`<table><thead><tr><th>Objetivo</th><th>Ahorrado</th><th>Meta</th><th>Progreso</th><th>Fecha límite</th></tr></thead><tbody>`;
+    S.ahorros.forEach(a=>{
+      const pct=a.target>0?Math.min(100,Math.round(a.saved/a.target*100)):0;
+      body+=`<tr><td><b>${esc(a.title)}</b><br><span style="font-size:.76rem;color:#888">${esc(a.desc||'')}</span></td><td class="green">€${a.saved.toLocaleString('es')}</td><td>€${a.target.toLocaleString('es')}</td><td><b>${pct}%</b><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${a.color||'#b47cf7'}"></div></div></td><td>${fmtDate(a.deadline||a.date)}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  }
+  pdfOpen('Finanzas Personales', body);
+}
+
+// ── PDF PASATIEMPOS ──
+function exportPDFPasatiempo(){
+  let body=`<h2>🎨 <em>Mis pasatiempos</em></h2>`;
+  if(S.pasatiempo.length){
+    body+=`<table><thead><tr><th>Actividad</th><th>Fecha</th><th>Estado</th><th>Descripción</th></tr></thead><tbody>`;
+    S.pasatiempo.forEach(t=>{
+      const col={pending:'#e67e22',progress:'#6c8fff',done:'#2a9d5c'}[t.status]||'#888';
+      const lbl={pending:'Pendiente',progress:'En curso',done:'Completado'}[t.status]||t.status;
+      body+=`<tr><td><b>${esc(t.title)}</b></td><td>${fmtDate(t.date)}</td><td><span class="badge" style="background:${col}22;color:${col}">${lbl}</span></td><td style="color:#888;font-size:.8rem">${esc(t.desc||'')}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin actividades registradas.</p>`;
+  pdfOpen('Pasatiempos & Ocio', body);
+}
+
+// ── PDF GIMNASIA ──
+function exportPDFGimnasia(){
+  const completados=S.gimnasia.filter(g=>g.done).length;
+  let body=`
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.5rem;font-weight:700;color:#e05a7a">${S.gimnasia.length}</div><div style="font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Total entrenos</div></div>
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.5rem;font-weight:700;color:#2a9d5c">${completados}</div><div style="font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Completados</div></div>
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.5rem;font-weight:700;color:#6c8fff">${S.gimnasia.length-completados}</div><div style="font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Pendientes</div></div>
+  </div>
+  <h2>🏋️ <em>Registro de entrenos</em></h2>`;
+  if(S.gimnasia.length){
+    body+=`<table><thead><tr><th>Entrenamiento</th><th>Fecha</th><th>Duración</th><th>Estado</th><th>Ejercicios</th></tr></thead><tbody>`;
+    [...S.gimnasia].sort((a,b)=>b.date.localeCompare(a.date)).forEach(g=>{
+      body+=`<tr><td><b>${esc(g.title)}</b></td><td>${fmtDate(g.date)}</td><td>${esc(g.duration||'—')}</td><td>${g.done?'<span class="green">✓ Completado</span>':'<span style="color:#e67e22">⏳ Pendiente</span>'}</td><td style="color:#888;font-size:.78rem">${esc(g.desc||'')}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  }
+  pdfOpen('Gimnasia & Salud', body);
+}
+
+// ── PDF OBJETIVOS ──
+function exportPDFObjetivos(){
+  let body=`<h2>🎯 <em>Mis objetivos</em></h2>`;
+  if(S.objetivos.length){
+    S.objetivos.forEach(o=>{
+      const pct=o.progress;
+      const col=pct>=100?'#2a9d5c':pct>=60?'#6c8fff':pct>=30?'#e67e22':'#c0392b';
+      body+=`<div class="card-row" style="border-left-color:${col};margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><b style="font-size:.95rem">${esc(o.title)}</b><br><span style="font-size:.78rem;color:#888">${esc(o.desc||'')}</span></div>
+          <div style="text-align:right;font-size:1.3rem;font-weight:700;color:${col};margin-left:12px">${pct}%</div>
+        </div>
+        <div style="margin-top:8px;font-size:.78rem;color:#888">🏁 Límite: ${fmtDate(o.deadline)}</div>
+        <div class="prog-bar" style="margin-top:6px"><div class="prog-fill" style="width:${pct}%;background:${col}"></div></div>
+      </div>`;
+    });
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin objetivos registrados.</p>`;
+  pdfOpen('Mis Objetivos', body);
+}
+
+// ── PDF GLUCOSA ──
+function exportPDFGlucosa(){
+  if(!S.glucosa) S.glucosa=[];
+  const vals=S.glucosa.map(g=>g.valor);
+  const media=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):0;
+  const min=vals.length?Math.min(...vals):'—';
+  const max=vals.length?Math.max(...vals):'—';
+  const fuera=S.glucosa.filter(g=>g.valor<70||g.valor>180).length;
+
+  let body=`
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#6c8fff">${S.glucosa.length}</div><div style="font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:3px">Tomas totales</div></div>
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#2a9d5c">${media}</div><div style="font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:3px">Media mg/dL</div></div>
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#2a9d5c">${min}</div><div style="font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:3px">Mínima</div></div>
+    <div style="background:#f8f7fc;border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.4rem;font-weight:700;color:${max>180?'#c0392b':'#e67e22'}">${max}</div><div style="font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:3px">Máxima</div></div>
+  </div>
+  ${fuera>0?`<div style="background:#fde;border:1px solid #c0392b44;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.84rem;color:#c0392b">⚠️ <b>${fuera} tomas</b> fuera del rango normal (70–180 mg/dL)</div>`:'<div style="background:#efe;border:1px solid #2a9d5c44;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.84rem;color:#2a9d5c">✅ Todas las tomas dentro del rango normal</div>'}
+  <h2>🩸 <em>Registro de glucosa</em></h2>`;
+
+  if(S.glucosa.length){
+    const sorted=[...S.glucosa].sort((a,b)=>b.date.localeCompare(a.date)||b.time.localeCompare(a.time));
+    body+=`<table><thead><tr><th>Fecha</th><th>Hora</th><th>Valor</th><th>Estado</th><th>Momento</th><th>Medicación</th><th>Notas</th></tr></thead><tbody>`;
+    sorted.forEach(g=>{
+      const al=glucAlert(g.valor);
+      const col={ok:'#2a9d5c',high:'#e67e22','very-high':'#c0392b',low:'#c0392b'}[al.cls]||'#888';
+      body+=`<tr><td>${fmtDate(g.date)}</td><td>${g.time}</td><td><b style="color:${col};font-size:.95rem">${g.valor}</b> <span style="color:#aaa;font-size:.75rem">mg/dL</span></td><td><span class="badge" style="background:${col}22;color:${col}">${al.label}</span></td><td style="font-size:.8rem">${esc(g.momento)}</td><td style="font-size:.78rem;color:#888">${esc(g.medicacion||'—')}</td><td style="font-size:.78rem;color:#888">${esc(g.notas||'—')}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin tomas registradas.</p>`;
+
+  pdfOpen('Glucosa & Control', body);
+}
+
+function exportPDFActual(){
+  const m={calendario:exportPDFCalendario,trabajo:exportPDFTrabajo,finanzas:exportPDFFinanzas,pasatiempo:exportPDFPasatiempo,gimnasia:exportPDFGimnasia,objetivos:exportPDFObjetivos,glucosa:exportPDFGlucosa};
+  const fn=m[curTab]; if(fn) fn(); else showToast('Selecciona una sección primero');
+}
+
+// ══════════════════════════════════════════════════════════════
+// AUTOCOMPLETE ENGINE
+// ══════════════════════════════════════════════════════════════
+// Builds suggestion pools from existing data
+function acPool(){
+  const clientes  = [...new Set(S.reservas.map(r=>r.client).filter(Boolean))];
+  const menus     = [...new Set(S.reservas.map(r=>r.menuName).filter(Boolean))];
+  const platos    = [...new Set(S.reservas.flatMap(r=>(r.menu||[]).map(p=>p.dish)).filter(Boolean))];
+  const cursos    = [...new Set(S.reservas.flatMap(r=>(r.menu||[]).map(p=>p.course)).filter(Boolean))];
+  const notas_r   = [...new Set(S.reservas.map(r=>r.notes).filter(Boolean))];
+  const proveedores= [...new Set(S.pedidos.map(p=>p.supplier).filter(Boolean))];
+  const productos = [...new Set(S.pedidos.flatMap(p=>(p.items||[]).map(i=>i.name)).filter(Boolean))];
+  const notas_p   = [...new Set(S.pedidos.map(p=>p.notes).filter(Boolean))];
+  const tareas    = [...new Set(S.trabajo.map(t=>t.title).filter(Boolean))];
+  const desc_t    = [...new Set(S.trabajo.map(t=>t.desc).filter(Boolean))];
+  return { clientes, menus, platos, cursos, notas_r, proveedores, productos, notas_p, tareas, desc_t };
+}
+
+let acActive = null; // current active dropdown id
+
+function acSetup(inputId, poolKey, iconFn){
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  // wrap in ac-wrap if not already
+  if(!input.parentElement.classList.contains('ac-wrap')){
+    const wrap = document.createElement('div');
+    wrap.className = 'ac-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+  }
+  const dropId = inputId + '_drop';
+  let drop = document.getElementById(dropId);
+  if(!drop){
+    drop = document.createElement('div');
+    drop.className = 'ac-dropdown';
+    drop.id = dropId;
+    input.parentElement.appendChild(drop);
+  }
+
+  input.addEventListener('input', ()=>{
+    const q = input.value.trim().toLowerCase();
+    const pool = acPool()[poolKey] || [];
+    if(!q || q.length < 1){ drop.classList.remove('open'); return; }
+    const matches = pool.filter(s=>s.toLowerCase().includes(q) && s.toLowerCase() !== q).slice(0,8);
+    if(!matches.length){ drop.classList.remove('open'); return; }
+    drop.innerHTML = matches.map((m,i)=>{
+      const hi = m.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<b>$1</b>');
+      const icon = iconFn ? iconFn(m) : '';
+      return `<div class="ac-item" data-val="${esc(m)}" onclick="acPick('${inputId}','${dropId}',this.dataset.val)">${icon}${hi}</div>`;
+    }).join('');
+    drop.classList.add('open');
+    acActive = dropId;
+  });
+
+  input.addEventListener('keydown', e=>{
+    if(!drop.classList.contains('open')) return;
+    const items = drop.querySelectorAll('.ac-item');
+    const cur = drop.querySelector('.ac-item.selected');
+    if(e.key==='ArrowDown'){
+      e.preventDefault();
+      const next = cur ? (cur.nextElementSibling||items[0]) : items[0];
+      if(cur) cur.classList.remove('selected'); if(next) next.classList.add('selected');
+    } else if(e.key==='ArrowUp'){
+      e.preventDefault();
+      const prev = cur ? (cur.previousElementSibling||items[items.length-1]) : items[items.length-1];
+      if(cur) cur.classList.remove('selected'); if(prev) prev.classList.add('selected');
+    } else if(e.key==='Enter'){
+      const sel = drop.querySelector('.ac-item.selected');
+      if(sel){ e.preventDefault(); acPick(inputId, dropId, sel.dataset.val); }
+    } else if(e.key==='Escape'){
+      drop.classList.remove('open');
+    }
+  });
+
+  input.addEventListener('blur', ()=>setTimeout(()=>drop.classList.remove('open'),180));
+}
+
+function acPick(inputId, dropId, val){
+  const input = document.getElementById(inputId);
+  if(input){ input.value = val; input.dispatchEvent(new Event('input',{bubbles:true})); }
+  const drop = document.getElementById(dropId);
+  if(drop) drop.classList.remove('open');
+}
+
+// Setup autocomplete after modal opens — hook into openModal
+const _origOpenModal = openModal;
+function openModal(section, id=null){
+  _origOpenModal(section, id);
+  setTimeout(()=>{
+    if(section==='reservas'){
+      acSetup('f_client',   'clientes',   ()=>'👤 ');
+      acSetup('f_menuName', 'menus',      ()=>'🍴 ');
+      acSetup('f_notes',    'notas_r',    ()=>'📝 ');
+    }
+    if(section==='pedidos'){
+      acSetup('f_title',    'proveedores',()=>'🏭 ');
+      acSetup('f_notes',    'notas_p',    ()=>'📝 ');
+    }
+    if(section==='trabajo'){
+      acSetup('f_title',    'tareas',     ()=>'💼 ');
+      acSetup('f_desc',     'desc_t',     ()=>'📄 ');
+    }
+    // Also setup dynamic order item inputs in pedidos
+  }, 120);
+}
+
+// Patch addMItem to add autocomplete to new product rows
+const _origAddMItem = addMItem;
+function addMItem(){
+  _origAddMItem();
+  setTimeout(()=>{
+    const rows = document.querySelectorAll('#mItemsList input[placeholder="Producto"]');
+    const last = rows[rows.length-1];
+    if(last && !last.id){ last.id = 'mi_prod_'+Date.now(); acSetup(last.id,'productos',()=>'📦 '); }
+  },80);
+}
+
+// Patch addMCourse for dish autocomplete
+const _origAddMCourse = addMCourse;
+function addMCourse(){
+  _origAddMCourse();
+  setTimeout(()=>{
+    const inputs = document.querySelectorAll('#mCoursesList input[placeholder="Tipo plato"]');
+    const last = inputs[inputs.length-1];
+    if(last && !last.id){ last.id = 'mc_course_'+Date.now(); acSetup(last.id,'cursos',()=>'🍽️ '); }
+    const dishes = document.querySelectorAll('#mCoursesList input[placeholder="Nombre del plato"]');
+    const lastD = dishes[dishes.length-1];
+    if(lastD && !lastD.id){ lastD.id = 'mc_dish_'+Date.now(); acSetup(lastD.id,'platos',()=>'🍴 '); }
+  },80);
+}
+
+// ══════════════════════════════════════════════════════════════
+// ORDEN DEL DÍA
+// ══════════════════════════════════════════════════════════════
+function renderOrdenDia(){
+  const fromEl = document.getElementById('od-from');
+  const daysEl = document.getElementById('od-days');
+  if(!fromEl || !daysEl) return;
+
+  const fromDate = fromEl.value || TISO;
+  if(!fromEl.value) fromEl.value = TISO;
+  const numDays  = Math.min(14, Math.max(1, parseInt(daysEl.value)||3));
+
+  // Build array of dates
+  const dates = [];
+  for(let i=0;i<numDays;i++){
+    const d = new Date(fromDate+'T12:00:00'); d.setDate(d.getDate()+i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+
+  const DOW = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  let totalRes=0, totalPax=0, totalConf=0;
+
+  const grid = document.getElementById('od-grid');
+  grid.innerHTML = dates.map(iso=>{
+    const [y,m,d] = iso.split('-');
+    const dow = new Date(parseInt(y),parseInt(m)-1,parseInt(d)).getDay();
+    const isT = iso===TISO;
+    const reservas = S.reservas
+      .filter(r=>r.date===iso && r.status!=='cancelled')
+      .sort((a,b)=>a.time.localeCompare(b.time));
+
+    totalRes  += reservas.length;
+    totalPax  += reservas.reduce((a,r)=>a+r.pax,0);
+    totalConf += reservas.filter(r=>r.status==='confirmed').length;
+
+    const statusCol = {confirmed:'#4ecb71',pending:'#f4a553',waitlist:'#6c8fff'};
+
+    const items = reservas.length ? reservas.map(r=>`
+      <div class="od-res-item">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <div class="od-status-dot" style="background:${statusCol[r.status]||'#f4a553'}"></div>
+          <div style="flex:1;min-width:0">
+            <div class="od-res-time">${r.time} · Mesa ${r.table} · ${r.pax} pax</div>
+            <div class="od-res-client">${esc(r.client)}</div>
+            ${r.phone?`<div class="od-res-detail">📞 ${esc(r.phone)}</div>`:''}
+            ${r.menuName?`<div class="od-res-menu">🍴 ${esc(r.menuName)}</div>`:''}
+            ${r.menu&&r.menu.length?`<div class="od-res-detail" style="margin-top:3px">${r.menu.map(p=>`<span style="color:var(--muted)">${esc(p.course)}:</span> ${esc(p.dish)}`).join(' · ')}</div>`:''}
+            ${r.notes?`<div class="od-res-detail" style="color:var(--muted);font-style:italic">📝 ${esc(r.notes)}</div>`:''}
+          </div>
+        </div>
+      </div>`).join('')
+      : `<div class="od-empty">Sin reservas</div>`;
+
+    const paxDay = reservas.reduce((a,r)=>a+r.pax,0);
+    return `<div class="od-day-col">
+      <div class="od-day-head ${isT?'today-col':''}">
+        <div>
+          <div class="od-day-name">${DOW[dow]} ${isT?'· HOY':''}</div>
+          <div class="od-day-num">${parseInt(d)}/${parseInt(m)}</div>
+        </div>
+        <div style="text-align:right;font-size:.72rem;color:var(--muted)">
+          <div>${reservas.length} mesas</div>
+          <div>${paxDay} pax</div>
+        </div>
+      </div>
+      <div class="od-body">${items}</div>
+    </div>`;
+  }).join('');
+
+  // Stats bar
+  document.getElementById('od-stats').innerHTML = `
+    <div class="od-stat-item">📅 <b>${numDays}</b> días</div>
+    <div class="od-stat-item">🍽️ <b>${totalRes}</b> reservas totales</div>
+    <div class="od-stat-item">👥 <b>${totalPax}</b> comensales</div>
+    <div class="od-stat-item">✓ <b>${totalConf}</b> confirmadas</div>
+    <div class="od-stat-item" style="margin-left:auto;color:var(--muted);font-size:.74rem">Desplaza → para ver más días</div>`;
+}
+
+// ── PDF Orden del día ──
+function exportPDFOrden(){
+  const fromEl = document.getElementById('od-from');
+  const daysEl = document.getElementById('od-days');
+  const fromDate = fromEl?.value || TISO;
+  const numDays  = Math.min(14, Math.max(1, parseInt(daysEl?.value)||3));
+  const MNAMES_FULL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const DOW_FULL=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+  let body='';
+  for(let i=0;i<numDays;i++){
+    const d = new Date(fromDate+'T12:00:00'); d.setDate(d.getDate()+i);
+    const iso = d.toISOString().split('T')[0];
+    const [y,m,dd] = iso.split('-');
+    const dow = d.getDay();
+    const isT = iso===TISO;
+    const reservas = S.reservas.filter(r=>r.date===iso&&r.status!=='cancelled').sort((a,b)=>a.time.localeCompare(b.time));
+    const paxDay = reservas.reduce((a,r)=>a+r.pax,0);
+
+    body+=`<div style="margin-bottom:24px;break-inside:avoid">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:${isT?'#e8eeff':'#f8f7fc'};border-radius:10px 10px 0 0;border:1px solid ${isT?'#6c8fff':'#eee'}">
+        <div>
+          <div style="font-size:.72rem;font-weight:700;color:${isT?'#6c8fff':'#888'};text-transform:uppercase;letter-spacing:.6px">${DOW_FULL[dow]}${isT?' — HOY':''}</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700">${parseInt(dd)} de ${MNAMES_FULL[parseInt(m)-1]} ${y}</div>
+        </div>
+        <div style="text-align:right;font-size:.82rem;color:#888">${reservas.length} reservas · ${paxDay} comensales</div>
+      </div>`;
+
+    if(reservas.length){
+      body+=`<table style="border:1px solid #eee;border-top:none;border-radius:0 0 10px 10px;overflow:hidden">
+        <thead><tr style="background:#f8f7fc">
+          <th style="width:60px">Hora</th><th style="width:40px">Mesa</th><th>Cliente</th><th style="width:40px">Pax</th><th>Menú</th><th>Notas</th>
+        </tr></thead><tbody>`;
+      reservas.forEach(r=>{
+        const col={confirmed:'#2a9d5c',pending:'#e67e22',cancelled:'#c0392b'}[r.status]||'#888';
+        body+=`<tr>
+          <td style="font-weight:700;color:#555">${r.time}</td>
+          <td style="font-weight:700;color:#6c8fff;font-size:1rem;font-family:'Playfair Display',serif">${r.table}</td>
+          <td><b>${esc(r.client)}</b>${r.phone?`<br><span style="font-size:.74rem;color:#888">📞 ${esc(r.phone)}</span>`:''}</td>
+          <td style="text-align:center">${r.pax}</td>
+          <td style="font-size:.78rem">${r.menuName?`<b>${esc(r.menuName)}</b><br>`:''}${(r.menu||[]).map(p=>`<span style="color:#888">${esc(p.course)}:</span> ${esc(p.dish)}`).join('<br>')}</td>
+          <td style="font-size:.76rem;color:#888;font-style:italic">${esc(r.notes||'—')}</td>
+        </tr>`;
+      });
+      body+=`</tbody></table>`;
+    } else {
+      body+=`<div style="border:1px solid #eee;border-top:none;border-radius:0 0 10px 10px;padding:14px;text-align:center;color:#aaa;font-size:.84rem">Sin reservas</div>`;
+    }
+    body+=`</div>`;
+  }
+
+  pdfOpen('Orden del día — Servicio', body);
+}
 // ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
-if(!S.escandallos) S.escandallos=[];
-if(!S.glucosa) S.glucosa=[];
+// Secciones garantizadas por EMPTY_STATE — no necesitan init manual
 isDark = localStorage.getItem('theme') !== 'light';
 applyTheme();
 renderCalendar();
-setTimeout(()=>{ const gd=document.getElementById('gluc-date'); if(gd) gd.value=TISO; },100);
+setTimeout(()=>{
+  const gd=document.getElementById('gluc-date'); if(gd) gd.value=TISO;
+  const od=document.getElementById('od-from'); if(od) od.value=TISO;
+},100);
 
-// Service Worker registration
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').then(()=>{
-    console.log('SW registered');
-  }).catch(e=>console.log('SW error:',e));
+// Service Worker — solo en GitHub Pages
+if('serviceWorker' in navigator && location.hostname.endsWith('github.io')){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 
 // Handle PWA shortcuts via URL params
@@ -2594,7 +3130,7 @@ if('serviceWorker' in navigator){
   },200);
 })();
 </script>
-<button id="pdf-fab" onclick="exportPDF()">📄 Exportar PDF</button>
+<button id="pdf-fab" onclick="exportPDFActual()" title="Exportar sección actual como PDF">📄 PDF sección</button>
 
 <!-- WIDGET DEL DÍA -->
 <div id="widget-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:400;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);padding-bottom:0" onclick="if(event.target===this)closeWidget()">
