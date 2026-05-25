@@ -2,8 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Agenda">
+<meta name="theme-color" content="#0f0e11" id="theme-color-meta">
 <title>Mi Agenda Personal</title>
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -698,7 +704,7 @@ body.light .cev-card{background:#fff;}
 // ══════════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════════
-const KEY = 'agenda_v14';
+const KEY = 'agenda_v15';
 const TODAY = new Date();
 const TISO  = TODAY.toISOString().split('T')[0];
 
@@ -2109,8 +2115,15 @@ function renderPrintSheet(){
 // ══════════════════════════════════════════════════════════════
 let isDark = localStorage.getItem('theme') !== 'light';
 function applyTheme(){
-  if(isDark){ document.body.classList.remove('light'); document.getElementById('theme-btn').textContent='☀️ Claro'; }
-  else { document.body.classList.add('light'); document.getElementById('theme-btn').textContent='🌙 Oscuro'; }
+  if(isDark){
+    document.body.classList.remove('light');
+    document.getElementById('theme-btn').textContent='☀️ Claro';
+    document.getElementById('theme-color-meta').setAttribute('content','#0f0e11');
+  } else {
+    document.body.classList.add('light');
+    document.getElementById('theme-btn').textContent='🌙 Oscuro';
+    document.getElementById('theme-color-meta').setAttribute('content','#f4f3f8');
+  }
   localStorage.setItem('theme', isDark?'dark':'light');
 }
 function toggleTheme(){ isDark=!isDark; applyTheme(); }
@@ -2446,6 +2459,110 @@ function renderGlucosa(){
     </table>`;
 }
 
+
+// ══════════════════════════════════════════════════════════════
+// WIDGET DEL DÍA
+// ══════════════════════════════════════════════════════════════
+function openWidget(){
+  document.getElementById('widget-overlay').style.display='flex';
+  renderWidget();
+}
+function closeWidget(){
+  document.getElementById('widget-overlay').style.display='none';
+}
+
+function renderWidget(){
+  const [y,m,d]=TISO.split('-');
+  const dow=DNAMES[new Date(parseInt(y),parseInt(m)-1,parseInt(d)).getDay()];
+  document.getElementById('widget-date').textContent=`${parseInt(d)} de ${MNAMES[parseInt(m)-1]}`;
+
+  const todayRes=S.reservas.filter(r=>r.date===TISO&&r.status!=='cancelled').sort((a,b)=>a.time.localeCompare(b.time));
+  const todayCitas=[...S.citas,...S.eventos].filter(e=>e.date===TISO).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+  const pendTareas=S.trabajo.filter(t=>t.status!=='done'&&t.date===TISO);
+  const todayGluc=S.glucosa.filter(g=>g.date===TISO).sort((a,b)=>a.time.localeCompare(b.time));
+  const todayGym=S.gimnasia.filter(g=>g.date===TISO);
+
+  // Birthdays today
+  const md=`${String(parseInt(m)).padStart(2,'0')}-${String(parseInt(d)).padStart(2,'0')}`;
+  const todayBdays=S.cumples.filter(b=>b.date===md);
+
+  let html='';
+
+  // Birthdays
+  if(todayBdays.length){
+    html+=`<div style="background:#2a1510;border:1px solid #f4553a44;border-radius:12px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:.72rem;font-weight:700;color:#f4553a;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">🎂 Cumpleaños hoy</div>
+      ${todayBdays.map(b=>`<div style="font-size:.88rem;font-weight:600">🎉 ${esc(b.name)}</div>`).join('')}
+    </div>`;
+  }
+
+  // Glucosa última toma
+  if(todayGluc.length){
+    const last=todayGluc[todayGluc.length-1];
+    const al=glucAlert(last.valor);
+    html+=`<div style="background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--ag);border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--ag);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">🩸 Última glucosa · ${last.time}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:${glucValColor(last.valor)}">${last.valor} <span style="font-size:.8rem;font-weight:400;color:var(--muted)">mg/dL</span></div>
+      </div>
+      <span class="gluc-alert ${al.cls}" style="font-size:.8rem">${al.icon} ${al.label}</span>
+    </div>`;
+  }
+
+  // Citas y eventos
+  if(todayCitas.length){
+    html+=`<div style="margin-bottom:12px">
+      <div style="font-size:.72rem;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">🗓 Citas de hoy</div>
+      ${todayCitas.map(c=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)22">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></div>
+        <div style="flex:1;font-size:.87rem;font-weight:600">${esc(c.title)}</div>
+        <div style="font-size:.76rem;color:var(--muted)">${c.time||''}</div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  // Reservas
+  if(todayRes.length){
+    const paxTotal=todayRes.reduce((a,r)=>a+r.pax,0);
+    html+=`<div style="margin-bottom:12px">
+      <div style="font-size:.72rem;font-weight:700;color:var(--aw);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">🍽️ Servicio · ${todayRes.length} mesas · ${paxTotal} pax</div>
+      ${todayRes.map(r=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)22">
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--aw);min-width:28px">${r.table}</div>
+        <div style="flex:1">
+          <div style="font-size:.85rem;font-weight:600">${esc(r.client)}</div>
+          <div style="font-size:.74rem;color:var(--muted)">${r.time} · ${r.pax} pax</div>
+        </div>
+        <span class="badge ${r.status==='confirmed'?'b-confirmed':'b-pending'}">${r.status==='confirmed'?'✓':'⏳'}</span>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  // Tareas del día
+  if(pendTareas.length){
+    html+=`<div style="margin-bottom:12px">
+      <div style="font-size:.72rem;font-weight:700;color:var(--ah);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">💼 Tareas para hoy</div>
+      ${pendTareas.map(t=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)22">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--ah);flex-shrink:0"></div>
+        <div style="font-size:.86rem">${esc(t.title)}</div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  // Gimnasia
+  if(todayGym.length){
+    html+=`<div style="margin-bottom:12px">
+      <div style="font-size:.72rem;font-weight:700;color:var(--ag);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">🏋️ Entreno de hoy</div>
+      ${todayGym.map(g=>`<div style="font-size:.86rem;padding:6px 0;border-bottom:1px solid var(--border)22">
+        <span style="font-weight:600">${esc(g.title)}</span> <span style="color:var(--muted);font-size:.78rem">· ${g.duration}</span>
+        ${g.done?'<span style="color:#4ecb71;margin-left:6px;font-size:.75rem">✓ Completado</span>':''}
+      </div>`).join('')}
+    </div>`;
+  }
+
+  if(!html) html='<div style="text-align:center;padding:30px;color:var(--muted);font-size:.88rem">🌿 Día tranquilo, sin eventos programados.</div>';
+
+  document.getElementById('widget-content').innerHTML=html;
+}
 // ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
@@ -2454,9 +2571,45 @@ if(!S.glucosa) S.glucosa=[];
 isDark = localStorage.getItem('theme') !== 'light';
 applyTheme();
 renderCalendar();
-// set glucosa date input
 setTimeout(()=>{ const gd=document.getElementById('gluc-date'); if(gd) gd.value=TISO; },100);
+
+// Service Worker registration
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(()=>{
+    console.log('SW registered');
+  }).catch(e=>console.log('SW error:',e));
+}
+
+// Handle PWA shortcuts via URL params
+(function(){
+  const p=new URLSearchParams(location.search);
+  if(p.get('widget')==='true') setTimeout(openWidget,400);
+  if(p.get('tab')==='glucosa') setTimeout(()=>{
+    const btn=document.querySelector('[data-tab="glucosa"]');
+    if(btn) switchTab('glucosa',btn);
+  },200);
+  if(p.get('action')==='reserva') setTimeout(()=>{
+    const btn=document.querySelector('[data-tab="trabajo"]');
+    if(btn){ switchTab('trabajo',btn); setTimeout(()=>openModal('reservas'),200); }
+  },200);
+})();
 </script>
 <button id="pdf-fab" onclick="exportPDF()">📄 Exportar PDF</button>
+
+<!-- WIDGET DEL DÍA -->
+<div id="widget-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:400;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);padding-bottom:0" onclick="if(event.target===this)closeWidget()">
+  <div id="widget-box" style="background:var(--surface);border:1px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-width:540px;padding:28px 24px 36px;animation:fadeIn .25s ease;max-height:88vh;overflow-y:auto">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:4px">Hoy, <em id="widget-date" style="font-style:italic;color:var(--ac)"></em></div>
+    <div id="widget-content"></div>
+    <button onclick="closeWidget()" style="margin-top:20px;width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--soft);font-family:'DM Sans',sans-serif;font-size:.9rem;cursor:pointer">Cerrar</button>
+  </div>
+</div>
+
+<!-- WIDGET TRIGGER BUTTON -->
+<button id="widget-fab" onclick="openWidget()" style="position:fixed;bottom:80px;right:24px;background:var(--ac);color:#000;border:none;border-radius:50px;padding:12px 18px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 20px #0006;transition:all .2s;z-index:50;">
+  📋 Hoy
+</button>
+
 </body>
 </html>
