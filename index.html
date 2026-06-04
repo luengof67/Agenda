@@ -2721,6 +2721,12 @@ function exportPDFCalendario(){
 
 // ── PDF TRABAJO ──
 function exportPDFTrabajo(){
+  // Ask for date filter
+  const choice = prompt('¿Imprimir reservas de qué fecha?\n\nEscribe una fecha (AAAA-MM-DD) para filtrar por día,\no deja en blanco para exportar todo.');
+  if(choice === null) return; // cancelled
+  exportPDFTrabajoFn(choice.trim());
+}
+function exportPDFTrabajoFn(filterDate){
   let body=`<h2>📋 <em>Tareas</em></h2>`;
   if(S.trabajo.length){
     body+=`<table><thead><tr><th>Tarea</th><th>Fecha</th><th>Estado</th><th>Descripción</th></tr></thead><tbody>`;
@@ -2732,9 +2738,10 @@ function exportPDFTrabajo(){
     body+=`</tbody></table>`;
   } else body+=`<p style="color:#888;font-size:.84rem">Sin tareas.</p>`;
 
-  body+=`<h2>🍽️ <em>Reservas</em></h2>`;
-  if(S.reservas.length){
-    const sorted=[...S.reservas].sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+  body+=`<h2>🍽️ <em>Reservas</em>${filterDate?' — '+fmtDate(filterDate):''}</h2>`;
+  const reservasFiltradas = filterDate ? S.reservas.filter(r=>r.date===filterDate) : S.reservas;
+  if(reservasFiltradas.length){
+    const sorted=[...reservasFiltradas].sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
     sorted.forEach(r=>{
       const col={confirmed:'#2a9d5c',pending:'#e67e22',cancelled:'#c0392b'}[r.status]||'#888';
       const lbl={confirmed:'Confirmada',pending:'Pendiente',cancelled:'Cancelada'}[r.status]||r.status;
@@ -2748,7 +2755,7 @@ function exportPDFTrabajo(){
         ${r.notes?`<div style="font-size:.78rem;color:#888;margin-top:4px">📝 ${esc(r.notes)}</div>`:''}
       </div>`;
     });
-  } else body+=`<p style="color:#888;font-size:.84rem">Sin reservas.</p>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin reservas${filterDate?' para el '+fmtDate(filterDate):''}.</p>`;
 
   body+=`<h2>📦 <em>Pedidos</em></h2>`;
   if(S.pedidos.length){
@@ -2912,12 +2919,11 @@ let acActive = null; // current active dropdown id
 function acSetup(inputId, poolKey, iconFn){
   const input = document.getElementById(inputId);
   if(!input) return;
-  // wrap in ac-wrap if not already
-  if(!input.parentElement.classList.contains('ac-wrap')){
-    const wrap = document.createElement('div');
-    wrap.className = 'ac-wrap';
-    input.parentNode.insertBefore(wrap, input);
-    wrap.appendChild(input);
+  // Make parent relative for dropdown positioning (no DOM move)
+  const parent = input.parentElement;
+  if(!parent.classList.contains('ac-wrap')){
+    parent.classList.add('ac-wrap');
+    parent.style.position = 'relative';
   }
   const dropId = inputId + '_drop';
   let drop = document.getElementById(dropId);
@@ -2925,7 +2931,7 @@ function acSetup(inputId, poolKey, iconFn){
     drop = document.createElement('div');
     drop.className = 'ac-dropdown';
     drop.id = dropId;
-    input.parentElement.appendChild(drop);
+    parent.appendChild(drop);
   }
 
   input.addEventListener('input', ()=>{
