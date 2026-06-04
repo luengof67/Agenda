@@ -1677,7 +1677,18 @@ function openModal(section, id=null){
   }, 120);
 }
 
-function addMCourse(){ mCourses.push({course:'',dish:''}); renderMCourses(); }
+function addMCourse(){
+  mCourses.push({course:'',dish:''});
+  renderMCourses();
+  setTimeout(()=>{
+    const inputs = document.querySelectorAll('#mCoursesList input[placeholder="Tipo plato"]');
+    const last = inputs[inputs.length-1];
+    if(last && !last.id){ last.id = 'mc_course_'+Date.now(); acSetup(last.id,'cursos',()=>'🍽️ '); }
+    const dishes = document.querySelectorAll('#mCoursesList input[placeholder="Nombre del plato"]');
+    const lastD = dishes[dishes.length-1];
+    if(lastD && !lastD.id){ lastD.id = 'mc_dish_'+Date.now(); acSetup(lastD.id,'platos',()=>'🍴 '); }
+  }, 80);
+}
 function removeMCourse(i){ mCourses.splice(i,1); renderMCourses(); }
 function renderMCourses(){
   const c=document.getElementById('mCoursesList'); if(!c)return;
@@ -1689,7 +1700,15 @@ function renderMCourses(){
     </div>`).join('');
 }
 
-function addMItem(){ mItems.push({name:'',qty:'',price:0}); renderMItems(); }
+function addMItem(){
+  mItems.push({name:'',qty:'',price:0});
+  renderMItems();
+  setTimeout(()=>{
+    const rows = document.querySelectorAll('#mItemsList input[placeholder="Producto"]');
+    const last = rows[rows.length-1];
+    if(last && !last.id){ last.id = 'mi_prod_'+Date.now(); acSetup(last.id,'productos',()=>'📦 '); }
+  }, 80);
+}
 function removeMItem(i){ mItems.splice(i,1); renderMItems(); }
 function renderMItems(){
   const c=document.getElementById('mItemsList'); if(!c)return;
@@ -2952,33 +2971,6 @@ function acPick(inputId, dropId, val){
   if(input){ input.value = val; input.dispatchEvent(new Event('input',{bubbles:true})); }
   const drop = document.getElementById(dropId);
   if(drop) drop.classList.remove('open');
-}
-
-// Autocomplete hookup moved into openModal directly
-
-// Patch addMItem to add autocomplete to new product rows
-const _origAddMItem = addMItem;
-function addMItem(){
-  _origAddMItem();
-  setTimeout(()=>{
-    const rows = document.querySelectorAll('#mItemsList input[placeholder="Producto"]');
-    const last = rows[rows.length-1];
-    if(last && !last.id){ last.id = 'mi_prod_'+Date.now(); acSetup(last.id,'productos',()=>'📦 '); }
-  },80);
-}
-
-// Patch addMCourse for dish autocomplete
-const _origAddMCourse = addMCourse;
-function addMCourse(){
-  _origAddMCourse();
-  setTimeout(()=>{
-    const inputs = document.querySelectorAll('#mCoursesList input[placeholder="Tipo plato"]');
-    const last = inputs[inputs.length-1];
-    if(last && !last.id){ last.id = 'mc_course_'+Date.now(); acSetup(last.id,'cursos',()=>'🍽️ '); }
-    const dishes = document.querySelectorAll('#mCoursesList input[placeholder="Nombre del plato"]');
-    const lastD = dishes[dishes.length-1];
-    if(lastD && !lastD.id){ lastD.id = 'mc_dish_'+Date.now(); acSetup(lastD.id,'platos',()=>'🍴 '); }
-  },80);
 }
 
 // ══════════════════════════════════════════════════════════════
