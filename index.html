@@ -1658,6 +1658,23 @@ function openModal(section, id=null){
     }
   }
   document.getElementById('MO').classList.add('open');
+
+  // Autocomplete setup
+  setTimeout(()=>{
+    if(section==='reservas'){
+      acSetup('f_client',   'clientes',   ()=>'👤 ');
+      acSetup('f_menuName', 'menus',      ()=>'🍴 ');
+      acSetup('f_notes',    'notas_r',    ()=>'📝 ');
+    }
+    if(section==='pedidos'){
+      acSetup('f_title',    'proveedores',()=>'🏭 ');
+      acSetup('f_notes',    'notas_p',    ()=>'📝 ');
+    }
+    if(section==='trabajo'){
+      acSetup('f_title',    'tareas',     ()=>'💼 ');
+      acSetup('f_desc',     'desc_t',     ()=>'📄 ');
+    }
+  }, 120);
 }
 
 function addMCourse(){ mCourses.push({course:'',dish:''}); renderMCourses(); }
@@ -2937,27 +2954,7 @@ function acPick(inputId, dropId, val){
   if(drop) drop.classList.remove('open');
 }
 
-// Setup autocomplete after modal opens — hook into openModal
-const _origOpenModal = openModal;
-function openModal(section, id=null){
-  _origOpenModal(section, id);
-  setTimeout(()=>{
-    if(section==='reservas'){
-      acSetup('f_client',   'clientes',   ()=>'👤 ');
-      acSetup('f_menuName', 'menus',      ()=>'🍴 ');
-      acSetup('f_notes',    'notas_r',    ()=>'📝 ');
-    }
-    if(section==='pedidos'){
-      acSetup('f_title',    'proveedores',()=>'🏭 ');
-      acSetup('f_notes',    'notas_p',    ()=>'📝 ');
-    }
-    if(section==='trabajo'){
-      acSetup('f_title',    'tareas',     ()=>'💼 ');
-      acSetup('f_desc',     'desc_t',     ()=>'📄 ');
-    }
-    // Also setup dynamic order item inputs in pedidos
-  }, 120);
-}
+// Autocomplete hookup moved into openModal directly
 
 // Patch addMItem to add autocomplete to new product rows
 const _origAddMItem = addMItem;
