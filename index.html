@@ -2721,53 +2721,20 @@ function exportPDFCalendario(){
 
 // ── PDF TRABAJO ──
 function exportPDFTrabajo(){
-  // Mostrar mini-modal para seleccionar fecha o exportar todo
-  const existing = document.getElementById('pdf-date-modal');
-  if(existing) existing.remove();
-  const modal = document.createElement('div');
-  modal.id = 'pdf-date-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:300;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px)';
-  modal.innerHTML = `
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:400px;animation:fadeIn .22s ease">
-      <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:6px">📄 Exportar PDF</div>
-      <div style="font-size:.83rem;color:var(--muted);margin-bottom:18px">Selecciona una fecha para imprimir solo ese día, o deja en blanco para exportar todo.</div>
-      <div style="margin-bottom:16px">
-        <label style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Fecha (opcional)</label>
-        <input type="date" id="pdf-filter-date" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none">
-      </div>
-      <div style="display:flex;gap:9px;justify-content:flex-end">
-        <button onclick="document.getElementById('pdf-date-modal').remove()" style="padding:9px 20px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer">Cancelar</button>
-        <button onclick="_doPDFTrabajo()" style="padding:9px 22px;border-radius:9px;border:none;background:var(--aw);color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer">Exportar</button>
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-  modal.addEventListener('click', e=>{ if(e.target===modal) modal.remove(); });
-}
-
-function _doPDFTrabajo(){
-  const filterDate = document.getElementById('pdf-filter-date')?.value || '';
-  document.getElementById('pdf-date-modal')?.remove();
-
   let body=`<h2>📋 <em>Tareas</em></h2>`;
-  if(!filterDate){
-    if(S.trabajo.length){
-      body+=`<table><thead><tr><th>Tarea</th><th>Fecha</th><th>Estado</th><th>Descripción</th></tr></thead><tbody>`;
-      S.trabajo.forEach(t=>{
-        const col={pending:'#e67e22',progress:'#6c8fff',done:'#2a9d5c',urgent:'#c0392b'}[t.status]||'#888';
-        const lbl={pending:'Pendiente',progress:'En curso',done:'Completado',urgent:'Urgente'}[t.status]||t.status;
-        body+=`<tr><td><b>${esc(t.title)}</b></td><td>${fmtDate(t.date)}</td><td><span class="badge" style="background:${col}22;color:${col}">${lbl}</span></td><td style="color:#888;font-size:.8rem">${esc(t.desc||'')}</td></tr>`;
-      });
-      body+=`</tbody></table>`;
-    } else body+=`<p style="color:#888;font-size:.84rem">Sin tareas.</p>`;
-  }
+  if(S.trabajo.length){
+    body+=`<table><thead><tr><th>Tarea</th><th>Fecha</th><th>Estado</th><th>Descripción</th></tr></thead><tbody>`;
+    S.trabajo.forEach(t=>{
+      const col={pending:'#e67e22',progress:'#6c8fff',done:'#2a9d5c',urgent:'#c0392b'}[t.status]||'#888';
+      const lbl={pending:'Pendiente',progress:'En curso',done:'Completado',urgent:'Urgente'}[t.status]||t.status;
+      body+=`<tr><td><b>${esc(t.title)}</b></td><td>${fmtDate(t.date)}</td><td><span class="badge" style="background:${col}22;color:${col}">${lbl}</span></td><td style="color:#888;font-size:.8rem">${esc(t.desc||'')}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin tareas.</p>`;
 
-  const reservasFiltradas = filterDate
-    ? S.reservas.filter(r=>r.date===filterDate)
-    : S.reservas;
-
-  body+=`<h2>🍽️ <em>Reservas</em>${filterDate?' — '+fmtDate(filterDate):''}</h2>`;
-  if(reservasFiltradas.length){
-    const sorted=[...reservasFiltradas].sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+  body+=`<h2>🍽️ <em>Reservas</em></h2>`;
+  if(S.reservas.length){
+    const sorted=[...S.reservas].sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
     sorted.forEach(r=>{
       const col={confirmed:'#2a9d5c',pending:'#e67e22',cancelled:'#c0392b'}[r.status]||'#888';
       const lbl={confirmed:'Confirmada',pending:'Pendiente',cancelled:'Cancelada'}[r.status]||r.status;
@@ -2781,24 +2748,21 @@ function _doPDFTrabajo(){
         ${r.notes?`<div style="font-size:.78rem;color:#888;margin-top:4px">📝 ${esc(r.notes)}</div>`:''}
       </div>`;
     });
-  } else body+=`<p style="color:#888;font-size:.84rem">Sin reservas${filterDate?' para '+fmtDate(filterDate):''}.</p>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin reservas.</p>`;
 
-  if(!filterDate){
-    body+=`<h2>📦 <em>Pedidos</em></h2>`;
-    if(S.pedidos.length){
-      body+=`<table><thead><tr><th>Proveedor</th><th>Fecha</th><th>Estado</th><th>Total</th><th>Artículos</th></tr></thead><tbody>`;
-      S.pedidos.forEach(p=>{
-        const total=p.items.reduce((a,i)=>a+(i.price||0),0);
-        const col={received:'#2a9d5c',partial:'#e67e22',pending:'#6c8fff'}[p.status]||'#888';
-        const lbl={received:'Recibido',partial:'Parcial',pending:'Enviado'}[p.status]||p.status;
-        body+=`<tr><td><b>${esc(p.supplier)}</b></td><td>${fmtDate(p.date)}</td><td><span class="badge" style="background:${col}22;color:${col}">${lbl}</span></td><td class="green">€${total.toFixed(2)}</td><td style="font-size:.78rem;color:#888">${p.items.map(i=>i.name+' ('+i.qty+')').join(', ')}</td></tr>`;
-      });
-      body+=`</tbody></table>`;
-    } else body+=`<p style="color:#888;font-size:.84rem">Sin pedidos.</p>`;
-  }
+  body+=`<h2>📦 <em>Pedidos</em></h2>`;
+  if(S.pedidos.length){
+    body+=`<table><thead><tr><th>Proveedor</th><th>Fecha</th><th>Estado</th><th>Total</th><th>Artículos</th></tr></thead><tbody>`;
+    S.pedidos.forEach(p=>{
+      const total=p.items.reduce((a,i)=>a+(i.price||0),0);
+      const col={received:'#2a9d5c',partial:'#e67e22',pending:'#6c8fff'}[p.status]||'#888';
+      const lbl={received:'Recibido',partial:'Parcial',pending:'Enviado'}[p.status]||p.status;
+      body+=`<tr><td><b>${esc(p.supplier)}</b></td><td>${fmtDate(p.date)}</td><td><span class="badge" style="background:${col}22;color:${col}">${lbl}</span></td><td class="green">€${total.toFixed(2)}</td><td style="font-size:.78rem;color:#888">${p.items.map(i=>i.name+' ('+i.qty+')').join(', ')}</td></tr>`;
+    });
+    body+=`</tbody></table>`;
+  } else body+=`<p style="color:#888;font-size:.84rem">Sin pedidos.</p>`;
 
-  const title = filterDate ? `Reservas del ${fmtDate(filterDate)}` : 'Trabajo & Servicio';
-  pdfOpen(title, body);
+  pdfOpen('Trabajo & Servicio', body);
 }
 
 // ── PDF FINANZAS ──
