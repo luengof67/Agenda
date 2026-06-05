@@ -2923,7 +2923,8 @@ function acSetup(inputId, poolKey, iconFn){
     drop = document.createElement('div');
     drop.className = 'ac-dropdown';
     drop.id = dropId;
-    parent.appendChild(drop);
+    // Insert right after the input, not at end of parent
+    input.insertAdjacentElement('afterend', drop);
   }
 
   input.addEventListener('input', ()=>{
